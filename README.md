@@ -14,7 +14,7 @@ Este proyecto consiste en un **backend** en [NestJS](https://nestjs.com) y un **
   - [NestJS](https://nestjs.com) con [TypeORM](https://typeorm.io) y [PostgreSQL](https://www.postgresql.org).
   - Autenticación con **JWT** y [Passport](http://www.passportjs.org/).
   - Protección de endpoints con Guards.
-  - Módulo de `Users` y `Tasks` para la lógica de usuarios y tareas.
+  - Módulo de `Auth` y `Tasks` para la lógica de usuarios y tareas.
   - Estructura modular y escalable.
 
 - **Frontend**:
