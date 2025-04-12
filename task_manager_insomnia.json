@@ -1,0 +1,160 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-04-10T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.1.0",
+  "resources": [
+    {
+      "_id": "wrk_nestjs_demo",
+      "created": 1680450123456,
+      "description": "Colección de endpoints para NestJS - Autenticación y CRUD de Tareas",
+      "modified": 1680450123456,
+      "name": "NestJS Demo",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_nestjs_demo",
+      "created": 1680450123457,
+      "modified": 1680450123457,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000"
+      },
+      "parentId": "wrk_nestjs_demo",
+      "_type": "environment"
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "name": "Auth",
+      "parentId": "wrk_nestjs_demo",
+      "modified": 1680450123458,
+      "created": 1680450123458
+    },
+    {
+      "_id": "fld_tasks",
+      "_type": "request_group",
+      "name": "Tasks",
+      "parentId": "wrk_nestjs_demo",
+      "modified": 1680450123458,
+      "created": 1680450123458
+    },
+    {
+      "_id": "req_auth_register",
+      "created": 1680450124000,
+      "modified": 1680450124000,
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Register",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/register",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"123456\"\n}"
+      }
+    },
+    {
+      "_id": "req_auth_login",
+      "created": 1680450124001,
+      "modified": 1680450124001,
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"123456\"\n}"
+      }
+    },
+    {
+      "_id": "req_tasks_get_all",
+      "created": 1680450124002,
+      "modified": 1680450124002,
+      "parentId": "fld_tasks",
+      "_type": "request",
+      "name": "Get All Tasks",
+      "method": "GET",
+      "url": "{{ base_url }}/tasks",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ ACCESS_TOKEN }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_tasks_create",
+      "created": 1680450124003,
+      "modified": 1680450124003,
+      "parentId": "fld_tasks",
+      "_type": "request",
+      "name": "Create Task",
+      "method": "POST",
+      "url": "{{ base_url }}/tasks",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ ACCESS_TOKEN }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Nueva Tarea\",\n  \"descripcion\": \"Descripción de la tarea\"\n}"
+      }
+    },
+    {
+      "_id": "req_tasks_get_one",
+      "created": 1680450124004,
+      "modified": 1680450124004,
+      "parentId": "fld_tasks",
+      "_type": "request",
+      "name": "Get Task by ID",
+      "method": "GET",
+      "url": "{{ base_url }}/tasks/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ ACCESS_TOKEN }}"
+        }
+      ]
+    },
+    {
+      "_id": "req_tasks_update",
+      "created": 1680450124005,
+      "modified": 1680450124005,
+      "parentId": "fld_tasks",
+      "_type": "request",
+      "name": "Update Task",
+      "method": "PATCH",
+      "url": "{{ base_url }}/tasks/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ ACCESS_TOKEN }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Tarea Actualizada\",\n  \"descripcion\": \"Descripción actualizada\",\n  \"estado\": \"completada\"\n}"
+      }
+    },
+    {
+      "_id": "req_tasks_delete",
+      "created": 1680450124006,
+      "modified": 1680450124006,
+      "parentId": "fld_tasks",
+      "_type": "request",
+      "name": "Delete Task",
+      "method": "DELETE",
+      "url": "{{ base_url }}/tasks/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ ACCESS_TOKEN }}"
+        }
+      ]
+    }
+  ]
+}
