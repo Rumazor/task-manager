@@ -3,9 +3,8 @@ export interface Task {
   title: string;
   description?: string;
   completed: boolean;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  created_by: string;
 }
 
 export interface User {

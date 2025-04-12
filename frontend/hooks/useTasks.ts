@@ -16,6 +16,8 @@ export function useTasks(token: string) {
   const [loading, setLoading] = useState(true);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
+  console.log(tasks);
+
   const { toast } = useToast();
   const router = useRouter();
 
@@ -125,6 +127,8 @@ export function useTasks(token: string) {
         token,
         !task.completed
       );
+
+      console.log(updated);
 
       if (updated.success && updated.task) {
         setTasks((prev) => prev.map((t) => (t.id === id ? updated.task : t)));

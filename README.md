@@ -133,11 +133,15 @@ Si deseas ejecutar el **backend** sin Docker:
     yarn install
     yarn start:dev
 
+En el.env DB_HOST colocar **localhost**
+
 Si quieres ejecutar el **frontend** sin Docker:
 
     cd frontend
     yarn install
     yarn dev
+
+    En el .env BASE_API_URL colocar **"http://localhost:3000"**
 
 En este caso, asegúrate de configurar tu `.env` en Next.js y NestJS para apuntar a la base de datos adecuada y que Next.js consuma la URL correcta del backend.
 

@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -35,7 +31,7 @@ export class TaskService {
       message: 'Task creado correctamente',
       data: {
         id: response.id,
-        created_by: user.id,
+        created_by: user.email,
         title: response.title,
         description: response.description,
         completed: response.completed,
@@ -44,10 +40,19 @@ export class TaskService {
     };
   }
 
-  async findAll(): Promise<Task[]> {
-    return this.taskRepository.find();
-  }
+  async findAll(): Promise<any[]> {
+    const tasks = await this.taskRepository.find({
+      relations: ['user'],
+    });
 
+    return tasks.map((task) => {
+      const { user, ...taskData } = task;
+      return {
+        ...taskData,
+        created_by: user.email,
+      };
+    });
+  }
   async findOne(id: number): Promise<TaskResponseDto> {
     const task = await this.taskRepository.findOne({
       where: { id },
@@ -74,15 +79,38 @@ export class TaskService {
     id: number,
     title: string | undefined,
     description: string | undefined,
-    completed: boolean
-  ): Promise<Task> {
-    const task = await this.findOne(id);
+    completed: boolean,
+  ): Promise<any> {
+    const existingTask = await this.taskRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
 
-    if (title !== undefined) task.title = title;
-    if (description !== undefined) task.description = description;
-    if (completed !== undefined) task.completed = completed;
+    if (!existingTask) {
+      throw new NotFoundException('Tarea no encontrada');
+    }
 
-    return this.taskRepository.save(task);
+    if (title !== undefined) existingTask.title = title;
+    if (description !== undefined) existingTask.description = description;
+    if (completed !== undefined) existingTask.completed = completed;
+
+    await this.taskRepository.save(existingTask);
+
+    const updatedTask = await this.taskRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!updatedTask || !updatedTask.user) {
+      throw new NotFoundException('No se pudo actualizar la tarea');
+    }
+
+    const { user, ...taskData } = updatedTask;
+
+    return {
+      ...taskData,
+      created_by: user.email,
+    };
   }
 
   async findOneEntity(id: number): Promise<Task> {
