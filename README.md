@@ -3,8 +3,6 @@
 ¡Bienvenido/a a **Task Manager**!  
 Este proyecto consiste en un **backend** en [NestJS](https://nestjs.com) y un **frontend** en [Next.js](https://nextjs.org) para administrar tareas con autenticación JWT, manejo de sesiones vía cookies y una interfaz moderna usando [TailwindCSS](https://tailwindcss.com) y [shadcn/ui](https://ui.shadcn.com).
 
-- Desarrollado como parte de una **prueba técnica** para demostrar habilidades en el desarrollo de aplicaciones full-stack utilizando tecnologías modernas como NestJS, Next.js, Docker, TypeORM, y Tailwind con shadcn/ui.
-
 <div align="center">
   <img src="https://startinfinity.s3.us-east-2.amazonaws.com/production/blog/post/5/main/1SvzKctRCi8bwB0QPdOZkBP0pRhsOqZpl0wjs6y0.png" alt="Task Manager Preview" width="400"/>
 </div>
