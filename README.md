@@ -61,6 +61,10 @@ Nota: Ajusta las credenciales según tus necesidades.
 
 # Instrucciones de instalación y arranque (con Docker)
 
+<div align="center" style="margin-top: 60px; margin-bottom: 60px;">
+  <img src="https://geekflare.com/es/wp-content/uploads/2022/11/docker.webp" alt="Docker logs" width="600"/>
+</div>
+
 Clona este repositorio:
 
     git clone https://github.com/usuario/task-manager.git
@@ -78,10 +82,6 @@ Inicia los servicios:
 
 - El **backend** arrancará en `localhost:3001`.
 - El **frontend** se expondrá en `localhost:3000`.
-
-<div align="center" style="margin-top: 60px; margin-bottom: 60px;">
-  <img src="https://geekflare.com/es/wp-content/uploads/2022/11/docker.webp" alt="Docker logs" width="600"/>
-</div>
 
 Abre tu navegador en `http://localhost:3000` para ver la interfaz de Next.js.
 
@@ -113,6 +113,10 @@ Asegúrate de pasar el JWT (o la cookie) con cada request si la ruta está prote
 
 ## Flujo de autenticación en el Frontend
 
+<div align="center">
+  <img src="https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fw484ctabks2g2nz15rtp.png" alt="Flujo de autenticación" width="700"/>
+</div>
+
 **Login:**
 
 1. Se envían las credenciales al backend (`/auth/login`).
@@ -122,10 +126,6 @@ Asegúrate de pasar el JWT (o la cookie) con cada request si la ruta está prote
 
 - Antes de acceder a la ruts protegida (`/dashboard`) se verifica la cookie y JWT.
 - Si no estás autenticado, redirige a `/`.
-
-<div align="center">
-  <img src="https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fw484ctabks2g2nz15rtp.png" alt="Flujo de autenticación" width="700"/>
-</div>
 
 ## Scripts útiles
 
@@ -145,13 +145,13 @@ En este caso, asegúrate de configurar tu `.env` en Next.js y NestJS para apunta
 
 ## Personalización de UI (Tailwind & shadcn/ui)
 
-- Para modificar los estilos globales, revisa `frontend/tailwind.config.js` y `globals.css`.
-- Los componentes de shadcn/ui se ubican generalmente en `frontend/components/ui/`.
-- Si deseas más temas o ajustar la paleta de colores, revisa la [documentación oficial de shadcn/ui](https://ui.shadcn.com/).
-
 <div align="center">
   <img src="https://devio2024-media.developers.io/image/upload/v1728916104/user-gen-eyecatch/kdto5ze9dbln9agt6wsh.webp" alt="Shadcn UI Example" width="600"/>
 </div>
+
+- Para modificar los estilos globales, revisa `frontend/tailwind.config.js` y `globals.css`.
+- Los componentes de shadcn/ui se ubican generalmente en `frontend/components/ui/`.
+- Si deseas más temas o ajustar la paleta de colores, revisa la [documentación oficial de shadcn/ui](https://ui.shadcn.com/).
 
 ## Migraciones (TypeORM)
 
