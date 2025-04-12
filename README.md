@@ -122,7 +122,7 @@ Asegúrate de pasar el JWT (o la cookie) con cada request si la ruta está prote
 
 **Middleware en Next.js (`middleware.ts`):**
 
-- Antes de acceder a la ruts protegida (`/dashboard`) se verifica la cookie y JWT.
+- Antes de acceder a la ruta protegida (`/dashboard`) se verifica la cookie y JWT.
 - Si no estás autenticado, redirige a `/`.
 
 ## Scripts útiles
