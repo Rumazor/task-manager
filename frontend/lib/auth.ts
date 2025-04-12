@@ -98,7 +98,6 @@ export async function getUserFromCookie() {
     const decoded: any = jwt.decode(token);
     if (!decoded) return null;
 
-    console.log(decoded);
     return {
       id: decoded.id,
     };

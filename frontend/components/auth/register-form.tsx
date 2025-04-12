@@ -43,7 +43,6 @@ export default function RegisterForm({
 
     try {
       const result = await registerAction(email, password);
-      console.log(result);
 
       if (result.success === true) {
         toast({
