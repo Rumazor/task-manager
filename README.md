@@ -78,7 +78,6 @@ Inicia los servicios:
 
 - El **backend** arrancará en `localhost:3001`.
 - El **frontend** se expondrá en `localhost:3000`.
-- La base de datos **Postgres** estará en `localhost:5432`.
 
 <div align="center" style="margin-top: 60px; margin-bottom: 60px;">
   <img src="https://geekflare.com/es/wp-content/uploads/2022/11/docker.webp" alt="Docker logs" width="600"/>
