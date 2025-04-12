@@ -65,7 +65,7 @@ Nota: Ajusta las credenciales según tus necesidades.
 
 Clona este repositorio:
 
-    git clone https://github.com/usuario/task-manager.git
+    git clone https://github.com/Rumazor/task-manager
     cd task-manager
 
 Crea tu archivo `.env` en la raíz, con los valores adecuados (ver sección anterior).
@@ -150,14 +150,6 @@ En este caso, asegúrate de configurar tu `.env` en Next.js y NestJS para apunta
 - Para modificar los estilos globales, revisa `frontend/tailwind.config.js` y `globals.css`.
 - Los componentes de shadcn/ui se ubican generalmente en `frontend/components/ui/`.
 - Si deseas más temas o ajustar la paleta de colores, revisa la [documentación oficial de shadcn/ui](https://ui.shadcn.com/).
-
-## Migraciones (TypeORM)
-
-Si implementas migraciones en NestJS con TypeORM, podrías necesitar ejecutarlas antes de arrancar la app en producción. Por ejemplo:
-
-    docker-compose exec nestjs yarn typeorm migration:run
-
-O configura un script para que corra automáticamente antes de `start:prod`.
 
 ## Licencia
 
