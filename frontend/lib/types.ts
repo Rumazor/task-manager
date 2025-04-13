@@ -5,6 +5,7 @@ export interface Task {
   completed: boolean;
   created_at: string;
   created_by: string;
+  user_id: string;
 }
 
 export interface User {

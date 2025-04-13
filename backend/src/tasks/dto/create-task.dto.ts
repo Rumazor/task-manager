@@ -34,5 +34,6 @@ export class TaskCreatedResponseDto {
     description?: string;
     completed: boolean;
     created_at: Date;
+    user_id: string;
   };
 }

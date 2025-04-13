@@ -36,6 +36,7 @@ export class TaskService {
         description: response.description,
         completed: response.completed,
         created_at: response.created_at,
+        user_id: user.id,
       },
     };
   }
@@ -50,6 +51,7 @@ export class TaskService {
       return {
         ...taskData,
         created_by: user.email,
+        user_id: user.id,
       };
     });
   }
@@ -110,6 +112,7 @@ export class TaskService {
     return {
       ...taskData,
       created_by: user.email,
+      user_id: user.id,
     };
   }
 

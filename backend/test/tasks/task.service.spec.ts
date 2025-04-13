@@ -85,6 +85,7 @@ describe('TaskService', () => {
           completed: false,
           created_at: new Date(),
           user: { id: 1, email: 'user1@example.com' },
+          user_id: '123',
         },
         {
           id: 2,
@@ -93,6 +94,7 @@ describe('TaskService', () => {
           completed: true,
           created_at: new Date(),
           user: { id: 2, email: 'user2@example.com' },
+          user_id: '1234',
         },
       ];
 
