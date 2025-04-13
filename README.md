@@ -152,8 +152,7 @@ En este caso, asegúrate de configurar tu `.env` en Next.js y NestJS para apunta
 ## CI/CD con GitHub Actions
 
 <div align="center">
-  <img src="https://miro.medium.com/v2/resize:fit:1000/1*nh_OKoFf6JynPmvOzpAzLQ.png
-" alt="GitHub Actions" width="400"/>
+  <img src="https://i.ytimg.com/vi/IX1O4_MmUig/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAncKXdhJycm97x5MtBGCpJ9bl2_A" alt="Shadcn UI Example" width="400"/>
 </div>
 
 Este proyecto implementa un pipeline de integración continua mediante GitHub Actions que se ejecuta automáticamente en cada push a la rama principal
