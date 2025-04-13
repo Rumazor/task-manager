@@ -37,19 +37,37 @@ describe('TaskService', () => {
 
   describe('createTask', () => {
     it('debe crear y guardar una nueva tarea', async () => {
-      const dto = { title: 'New task', description: 'Some description' };
-      const user = new User();
-      user.id = 'user-123';
+      const mockUser: User = {
+        id: '',
+        email: 'user-123',
+        password: 'hashedpassword',
+        createdAt: new Date(),
+        tasks: [],
+        checkFieldsBeforeInser: jest.fn(),
+        checkFieldsBeforeUpdate: jest.fn(),
+      };
 
-      const createdTask = { ...dto, id: 1, user };
+      const createTaskDto = {
+        title: 'Nueva tarea',
+        description: 'Descripción',
+      };
+
+      const createdTask = {
+        id: 1,
+        ...createTaskDto,
+        user: mockUser,
+        completed: false,
+        created_at: new Date(),
+      };
+
       mockTaskRepository.create.mockReturnValue(createdTask);
       mockTaskRepository.save.mockResolvedValue(createdTask);
 
-      const result = await taskService.createTask(dto, user);
+      const result = await taskService.createTask(createTaskDto, mockUser);
 
       expect(mockTaskRepository.create).toHaveBeenCalledWith({
-        ...dto,
-        user,
+        ...createTaskDto,
+        user: mockUser,
       });
       expect(mockTaskRepository.save).toHaveBeenCalledWith(createdTask);
       expect(result.data.id).toBe(1);
@@ -59,11 +77,32 @@ describe('TaskService', () => {
 
   describe('findAll', () => {
     it('debe retornar un array de tareas', async () => {
-      mockTaskRepository.find.mockResolvedValue([{ id: 1 }, { id: 2 }]);
+      const mockTasks = [
+        {
+          id: 1,
+          title: 'Tarea 1',
+          description: 'Descripción 1',
+          completed: false,
+          created_at: new Date(),
+          user: { id: 1, email: 'user1@example.com' },
+        },
+        {
+          id: 2,
+          title: 'Tarea 2',
+          description: 'Descripción 2',
+          completed: true,
+          created_at: new Date(),
+          user: { id: 2, email: 'user2@example.com' },
+        },
+      ];
+
+      mockTaskRepository.find.mockResolvedValue(mockTasks);
 
       const result = await taskService.findAll();
-      expect(mockTaskRepository.find).toHaveBeenCalled();
+
       expect(result.length).toBe(2);
+      expect(result[0].created_by).toBe('user1@example.com');
+      expect(result[1].created_by).toBe('user2@example.com');
     });
   });
 
@@ -92,34 +131,49 @@ describe('TaskService', () => {
 
   describe('updateTask', () => {
     it('debe actualizar la tarea existente', async () => {
-      jest.spyOn(taskService, 'findOne').mockResolvedValueOnce({
-        id: 1,
-        title: 'Old title',
-        description: 'Old desc',
-        completed: false,
-        user: { id: 'user-123' },
-      } as any);
+      const taskId = 1;
+      const newTitle = 'Título actualizado';
+      const newDescription = 'Descripción actualizada';
+      const completed = true;
 
-      mockTaskRepository.save.mockImplementation((task) =>
-        Promise.resolve(task),
-      );
+      const existingTask = {
+        id: taskId,
+        title: 'Título anterior',
+        description: 'Descripción anterior',
+        completed: false,
+        created_at: new Date(),
+        user: { id: 1, email: 'user@example.com' },
+      };
+
+      const updatedTask = {
+        ...existingTask,
+        title: newTitle,
+        description: newDescription,
+        completed: completed,
+      };
+
+      mockTaskRepository.findOne.mockResolvedValueOnce(existingTask);
+      mockTaskRepository.save.mockResolvedValue(updatedTask);
+      mockTaskRepository.findOne.mockResolvedValueOnce(updatedTask);
 
       const result = await taskService.updateTask(
-        1,
-        'New Title',
-        'New Desc',
-        true,
+        taskId,
+        newTitle,
+        newDescription,
+        completed,
       );
-      expect(taskService.findOne).toHaveBeenCalledWith(1);
-      expect(mockTaskRepository.save).toHaveBeenCalledWith({
-        id: 1,
-        title: 'New Title',
-        description: 'New Desc',
-        completed: true,
-        user: { id: 'user-123' },
-      });
-      expect(result.title).toBe('New Title');
-      expect(result.completed).toBe(true);
+
+      expect(mockTaskRepository.findOne).toHaveBeenCalledTimes(2);
+      expect(mockTaskRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: taskId,
+          title: newTitle,
+          description: newDescription,
+          completed: completed,
+        }),
+      );
+      expect(result.title).toBe(newTitle);
+      expect(result.created_by).toBe('user@example.com');
     });
   });
 
