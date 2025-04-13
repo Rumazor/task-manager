@@ -14,7 +14,7 @@ export class CreateTaskDto {
 }
 
 export class TaskCreatedResponseDto {
-  @ApiProperty({ example: 'Task created successfully' })
+  @ApiProperty({ example: 'Tarea creada exitosamente' })
   message: string;
 
   @ApiProperty({
@@ -25,6 +25,7 @@ export class TaskCreatedResponseDto {
       description: 'Descripción de la tarea',
       completed: false,
       created_at: '2023-01-01T12:00:00.000Z',
+      user_id: 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
     },
   })
   data: {

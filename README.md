@@ -15,6 +15,7 @@ Este proyecto consiste en un **backend** en [NestJS](https://nestjs.com) y un **
   - Protección de endpoints con Guards.
   - Módulo de `Auth` y `Tasks` para la lógica de usuarios y tareas.
   - Estructura modular y escalable.
+  - Documentación de la API con Swagger, disponible en la ruta /docs.
 
 - **Frontend**:
 
@@ -111,6 +112,8 @@ El backend (NestJS) responderá en `http://localhost:3001`.
   Elimina la tarea.
 
 Asegúrate de pasar el JWT (o la cookie) con cada request si la ruta está protegida.
+
+Doc Swagger: La documentación generada con Swagger está disponible en la ruta /docs (asumiendo que el backend corre localmente en el puerto 3001).
 
 - **Nota**: Este proyecto incluye un archivo `insomnia_task_manager.json` que puedes importar en Insomnia para probar los endpoints descritos arriba. El archivo configura las rutas con ejemplos de cuerpos de solicitud y autenticación con JWT.
 
