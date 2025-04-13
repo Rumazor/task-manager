@@ -25,9 +25,15 @@ Este proyecto consiste en un **backend** en [NestJS](https://nestjs.com) y un **
   - Diseño responsive y experiencia de usuario moderna.
 
 - **Contenedores Docker** para un despliegue sencillo:
+
   - Backend (NestJS)
   - Frontend (Next.js)
   - Base de datos (Postgres)
+
+- **CI/CD con GitHub Actions**
+  - Integración continua con pruebas automatizadas
+  - Pipeline de construcción y verificación de calidad
+  - Ejecución de tests en entorno aislado
 
 ---
 
@@ -142,6 +148,66 @@ Si quieres ejecutar el **frontend** sin Docker:
     En el .env BASE_API_URL colocar **"http://localhost:3000"**
 
 En este caso, asegúrate de configurar tu `.env` en Next.js y NestJS para apuntar a la base de datos adecuada y que Next.js consuma la URL correcta del backend.
+
+## CI/CD con GitHub Actions
+
+<div align="center">
+  <img src="https://i.ytimg.com/vi/IX1O4_MmUig/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAncKXdhJycm97x5MtBGCpJ9bl2_A
+" alt="Shadcn UI Example" width="600"/>
+</div>
+
+Este proyecto implementa un pipeline de integración continua mediante GitHub Actions que se ejecuta automáticamente en cada push a la rama principal
+
+Para automatizar la ejecución de tests (CI) cada vez que hagas un push, puedes usar este flujo básico de GitHub Actions. Solo necesitas:
+
+- Crear la carpeta .github/workflows/ en la raíz del proyecto.
+- Dentro de ella, un archivo ci.yml (por ejemplo) con este contenido:
+
+      name: CI Pipeline
+
+      on:
+      push:
+      branches: [ "main" ]
+      pull_request:
+
+      jobs:
+      build-and-test:
+      runs-on: ubuntu-latest
+
+      steps: - name: Check out the repository
+      uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build containers
+        run: docker compose -f docker-compose.yml build
+
+      - name: Start only the database (Postgres) in background
+        run: docker compose -f docker-compose.yml up -d postgres
+
+      - name: Wait for Postgres to be ready
+        run: |
+          echo "Esperando a que Postgres inicie..."
+          until nc -z localhost 5432; do
+            echo "Postgres no está listo aún..."
+            sleep 1
+          done
+          echo "¡Postgres está listo!"
+
+      - name: Run NestJS tests
+        run: docker compose -f docker-compose.yml run --rm nestjs yarn test
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.yml down -v
+
+El pipeline incluye:
+
+- Construcción de contenedores Docker
+- Inicialización de la base de datos PostgreSQL
+- Ejecución de tests automatizados
+- Limpieza de recursos al finalizar
 
 ## Personalización de UI (Tailwind & shadcn/ui)
 
