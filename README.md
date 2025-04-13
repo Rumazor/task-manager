@@ -66,7 +66,7 @@ Nota: Ajusta las credenciales según tus necesidades.
 # Instrucciones de instalación y arranque (con Docker)
 
 <div align="center" style="margin-top: 60px; margin-bottom: 60px;">
-  <img src="https://geekflare.com/es/wp-content/uploads/2022/11/docker.webp" alt="Docker logs" width="600"/>
+  <img src="https://geekflare.com/es/wp-content/uploads/2022/11/docker.webp" alt="Docker logs" width="400"/>
 </div>
 
 Clona este repositorio:
@@ -118,7 +118,7 @@ Asegúrate de pasar el JWT (o la cookie) con cada request si la ruta está prote
 ## Flujo de autenticación en el Frontend
 
 <div align="center">
-  <img src="https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fw484ctabks2g2nz15rtp.png" alt="Flujo de autenticación" width="700"/>
+  <img src="https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fw484ctabks2g2nz15rtp.png" alt="Flujo de autenticación" width="400"/>
 </div>
 
 **Login:**
@@ -211,7 +211,7 @@ El pipeline incluye:
 ## Personalización de UI (Tailwind & shadcn/ui)
 
 <div align="center">
-  <img src="https://devio2024-media.developers.io/image/upload/v1728916104/user-gen-eyecatch/kdto5ze9dbln9agt6wsh.webp" alt="Shadcn UI Example" width="600"/>
+  <img src="https://devio2024-media.developers.io/image/upload/v1728916104/user-gen-eyecatch/kdto5ze9dbln9agt6wsh.webp" alt="Shadcn UI Example" width="400"/>
 </div>
 
 - Para modificar los estilos globales, revisa `frontend/tailwind.config.js` y `globals.css`.
