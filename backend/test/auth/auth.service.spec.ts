@@ -52,7 +52,6 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('debe crear y guardar un nuevo usuario si no existe previamente', async () => {
-      // Arrange
       mockUserService.findByEmail.mockResolvedValueOnce(null);
       mockUsersRepository.create.mockReturnValue({
         email: 'test@example.com',

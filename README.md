@@ -1,6 +1,5 @@
-# Task Manager App
+# Aplicación de gestor de tareas
 
-¡Bienvenido/a a **Task Manager**!  
 Este proyecto consiste en un **backend** en [NestJS](https://nestjs.com) y un **frontend** en [Next.js](https://nextjs.org) para administrar tareas con autenticación JWT, manejo de sesiones vía cookies y una interfaz moderna usando [TailwindCSS](https://tailwindcss.com) y [shadcn/ui](https://ui.shadcn.com).
 
 <div align="center">
@@ -148,6 +147,41 @@ Si quieres ejecutar el **frontend** sin Docker:
     En el .env BASE_API_URL colocar **"http://localhost:3000"**
 
 En este caso, asegúrate de configurar tu `.env` en Next.js y NestJS para apuntar a la base de datos adecuada y que Next.js consuma la URL correcta del backend.
+
+## Base de datos
+
+<div align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png" alt="Shadcn UI Example" width="200"/>
+</div>
+
+### El backend requiere PostgreSQL.
+
+Tienes dos opciones:
+
+- Opción 1:
+
+  Usar Docker solo para PostgreSQL:
+
+      cd backend
+      docker-compose up
+
+  Asegúrate de descomentar la sección del servicio de PostgreSQL en el archivo docker-compose.yml del backend:
+
+      services:
+      db:
+      image: postgres:14.3
+      restart: always
+      ports: - '${DB_PORT}:${DB_PORT}'
+      environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      volumes: - ./posgres:/var/lib/postgresql/data
+
+  Esto iniciará solo el contenedor de PostgreSQL definido en el archivo docker-compose.yml que se encuentra en la carpeta /backend.
+
+- Opción 2:
+
+  Usar PostgreSQL instalado localmente o cualquier otra instalación de PostgreSQL a la que tengas acceso. Asegúrate de actualizar las credenciales en tu archivo .env según corresponda.
 
 ## CI/CD con GitHub Actions
 
