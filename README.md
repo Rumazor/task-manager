@@ -31,9 +31,9 @@ Este proyecto consiste en un **backend** en [NestJS](https://nestjs.com) y un **
   - Base de datos (Postgres)
 
 - **CI/CD con GitHub Actions**
-  - Integración continua con pruebas automatizadas
-  - Pipeline de construcción y verificación de calidad
-  - Ejecución de tests en entorno aislado
+  - Integración continua con pruebas automatizadas.
+  - Pipeline de construcción y verificación de calidad.
+  - Ejecución de tests en entorno aislado.
 
 ---
 
