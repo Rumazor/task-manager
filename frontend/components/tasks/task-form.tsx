@@ -6,14 +6,23 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { Task } from "@/lib/types";
+import type { Task, User } from "@/lib/types";
+import { getUsersAction } from "./actions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TaskFormProps {
   onSubmit: (
     id: string,
     title: string,
     description: string,
-    token: any
+    token: any,
+    assignedToId?: string
   ) => Promise<void>;
   editingTask: Task | null;
   onCancel: () => void;
@@ -29,16 +38,33 @@ export default function TaskForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [users, setUsers] = useState<User[]>([]);
+  const [assignedToId, setAssignedToId] = useState<string | undefined>(
+    undefined
+  );
   useEffect(() => {
     if (editingTask) {
       setTitle(editingTask.title);
       setDescription(editingTask.description || "");
+      setAssignedToId(editingTask.assignedTo?.id);
     } else {
       setTitle("");
       setDescription("");
+      setAssignedToId(undefined);
     }
   }, [editingTask]);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      const response = await getUsersAction(token);
+      if (response.success && response.users) {
+        setUsers(response.users);
+      } else {
+        console.error("Error al obtener usuarios:", response.error);
+      }
+    }
+    fetchUsers();
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,9 +72,9 @@ export default function TaskForm({
 
     try {
       if (editingTask) {
-        await onSubmit(editingTask.id, title, description, token);
+        await onSubmit(editingTask.id, title, description, token, assignedToId);
       } else {
-        await onSubmit("", title, description, token);
+        await onSubmit("", title, description, token, assignedToId);
       }
       setTitle("");
       setDescription("");
@@ -73,6 +99,24 @@ export default function TaskForm({
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
         />
+        <Select
+          value={assignedToId || ""}
+          onValueChange={(value) => {
+            setAssignedToId(value === "unassigned" ? undefined : value);
+          }}
+        >
+          <SelectTrigger className="w-full mt-2">
+            <SelectValue placeholder="Asignar a..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="unassigned">Sin asignar</SelectItem>
+            {users.map((user) => (
+              <SelectItem key={user.id} value={user.id}>
+                {user.email}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="flex space-x-2">
         <Button type="submit" disabled={loading}>

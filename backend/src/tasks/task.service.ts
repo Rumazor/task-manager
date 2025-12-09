@@ -5,84 +5,84 @@ import { Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { User } from 'src/users/user.entity';
 import { CreateTaskDto, TaskCreatedResponseDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-dto';
 import { TaskResponseDto } from './dto/find-one.dto';
+import { UserService } from 'src/users/user.service';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
+    private readonly userService: UserService,
   ) {}
 
   async createTask(
     createTaskDto: CreateTaskDto,
     user: User,
   ): Promise<TaskCreatedResponseDto> {
+    const { assignedToId, ...rest } = createTaskDto;
     const task = this.taskRepository.create({
-      ...createTaskDto,
+      ...rest,
       user,
     });
 
+    if (assignedToId) {
+      const assignedUser = await this.userService.findOneByUuid(assignedToId);
+      if (!assignedUser) {
+        throw new NotFoundException(
+          `Usuario asignado con UUID ${assignedToId} no encontrado`,
+        );
+      }
+      task.assignedTo = assignedUser;
+    }
+
     await this.taskRepository.save(task);
 
-    const { user: _, ...response } = task;
+    const responseData: any = {
+      id: task.id,
+      created_by: user.email,
+      title: task.title,
+      description: task.description,
+      completed: task.completed,
+      created_at: task.created_at,
+      user_id: user.id,
+    };
+
+    if (task.assignedTo) {
+      responseData.assignedTo = {
+        id: task.assignedTo.id,
+        email: task.assignedTo.email,
+      };
+    }
 
     return {
       message: 'Task creado correctamente',
-      data: {
-        id: response.id,
-        created_by: user.email,
-        title: response.title,
-        description: response.description,
-        completed: response.completed,
-        created_at: response.created_at,
-        user_id: user.id,
-      },
+      data: responseData,
     };
   }
 
   async findAll(): Promise<any[]> {
     const tasks = await this.taskRepository.find({
-      relations: ['user'],
+      relations: ['user', 'assignedTo'],
     });
 
-    return tasks.map((task) => {
-      const { user, ...taskData } = task;
-      return {
-        ...taskData,
-        created_by: user.email,
-        user_id: user.id,
-      };
-    });
+    return tasks.map((task) => this.sanitizeTask(task));
   }
   async findOne(id: number): Promise<TaskResponseDto> {
     const task = await this.taskRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'assignedTo'],
     });
 
     if (!task) {
       throw new NotFoundException('Tarea no encontrada');
     }
 
-    const { user, ...taskWithoutUser } = task;
-    const response: TaskResponseDto = {
-      ...taskWithoutUser,
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-    };
-
-    return response;
+    return this.sanitizeTask(task) as TaskResponseDto;
   }
 
-  async updateTask(
-    id: number,
-    title: string | undefined,
-    description: string | undefined,
-    completed: boolean,
-  ): Promise<any> {
+  async updateTask(id: number, updateTaskDto: UpdateTaskDto): Promise<any> {
     const existingTask = await this.taskRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -92,28 +92,31 @@ export class TaskService {
       throw new NotFoundException('Tarea no encontrada');
     }
 
-    if (title !== undefined) existingTask.title = title;
-    if (description !== undefined) existingTask.description = description;
-    if (completed !== undefined) existingTask.completed = completed;
+    const { assignedToId, ...rest } = updateTaskDto;
+    Object.assign(existingTask, rest);
+
+    if (assignedToId) {
+      const assignedUser = await this.userService.findOneByUuid(assignedToId);
+      if (!assignedUser) {
+        throw new NotFoundException(
+          `Usuario asignado con UUID ${assignedToId} no encontrado`,
+        );
+      }
+      existingTask.assignedTo = assignedUser;
+    }
 
     await this.taskRepository.save(existingTask);
 
     const updatedTask = await this.taskRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'assignedTo'],
     });
 
-    if (!updatedTask || !updatedTask.user) {
+    if (!updatedTask) {
       throw new NotFoundException('No se pudo actualizar la tarea');
     }
 
-    const { user, ...taskData } = updatedTask;
-
-    return {
-      ...taskData,
-      created_by: user.email,
-      user_id: user.id,
-    };
+    return this.sanitizeTask(updatedTask);
   }
 
   async findOneEntity(id: number): Promise<Task> {
@@ -135,5 +138,32 @@ export class TaskService {
     return {
       message: 'Task borrado exitosamente',
     };
+  }
+
+  private sanitizeTask(task: Task) {
+    const sanitizedTask: any = { ...task };
+
+    if (sanitizedTask.user) {
+      delete sanitizedTask.user.password;
+    }
+    if (sanitizedTask.assignedTo) {
+      delete sanitizedTask.assignedTo.password;
+    }
+
+    const { user, ...taskData } = sanitizedTask;
+    const response = {
+      ...taskData,
+      created_by: user?.email,
+      user_id: user?.id,
+    };
+
+    if (sanitizedTask.assignedTo) {
+      response.assignedTo = {
+        id: sanitizedTask.assignedTo.id,
+        email: sanitizedTask.assignedTo.email,
+      };
+    }
+
+    return response;
   }
 }

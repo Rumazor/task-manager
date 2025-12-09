@@ -65,7 +65,9 @@ export default function TaskDashboard({
         </CardHeader>
         <CardContent>
           <TaskForm
-            onSubmit={(id, title, desc) => handleSubmit(id, title, desc)}
+            onSubmit={(id, title, desc, token, assignedToId) =>
+              handleSubmit(id, title, desc, assignedToId)
+            }
             editingTask={editingTask}
             onCancel={handleCancelEdit}
             token={token}

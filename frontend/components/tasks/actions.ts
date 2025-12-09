@@ -35,11 +35,45 @@ export async function getTasksAction(token: string) {
   }
 }
 
+export async function getUsersAction(token: string) {
+  try {
+    const res = await fetch(`${BASE_API_URL}/users`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      const errorMessage = Array.isArray(errorData.message)
+        ? errorData.message.join(', ')
+        : errorData.message || 'Error al obtener usuarios';
+      throw new Error(errorMessage);
+    }
+
+    const data = await res.json();
+
+    return {
+      success: true,
+      users: data,
+    };
+  } catch (error) {
+    console.error('Get users error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Error desconocido',
+    };
+  }
+}
+
 export async function createTaskAction(
   title: string,
   description: string,
   completed: boolean = false,
-  token: string
+  token: string,
+  assignedToId?: string
 ) {
   try {
     const res = await fetch(`${BASE_API_URL}/tasks`, {
@@ -52,6 +86,7 @@ export async function createTaskAction(
         title,
         description,
         completed,
+        assignedToId,
       }),
     });
 
@@ -83,7 +118,8 @@ export async function updateTaskAction(
   title?: string,
   description?: string,
   token?: string,
-  completed?: boolean
+  completed?: boolean,
+  assignedToId?: string
 ) {
   try {
     const res = await fetch(`${BASE_API_URL}/tasks/${id}`, {
@@ -92,7 +128,7 @@ export async function updateTaskAction(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token} `,
       },
-      body: JSON.stringify({ title, description, completed }),
+      body: JSON.stringify({ title, description, completed, assignedToId }),
     });
 
     if (!res.ok) {

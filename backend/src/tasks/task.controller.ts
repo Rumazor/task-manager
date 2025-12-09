@@ -84,12 +84,7 @@ export class TaskController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
-    const updatedTask = await this.taskService.updateTask(
-      id,
-      updateTaskDto.title,
-      updateTaskDto.descripcion,
-      updateTaskDto.completed,
-    );
+    const updatedTask = await this.taskService.updateTask(id, updateTaskDto);
 
     const { user: userInfo, ...task } = updatedTask;
     return task;

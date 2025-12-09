@@ -144,6 +144,14 @@ export default function TaskList({
                         </span>
                       </div>
                     )}
+                    {task.assignedTo && (
+                      <div className="flex items-center gap-1 text-blue-600">
+                        <User className="h-3 w-3" />
+                        <span className="truncate max-w-[120px]">
+                          Asignada a: {task.assignedTo.email}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateTaskDto {
   @ApiProperty({ example: 'Mi nueva tarea' })
@@ -11,6 +11,14 @@ export class CreateTaskDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  @ApiProperty({
+    example: 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6',
+    required: false,
+  })
+  @IsOptional()
+  @IsUUID()
+  assignedToId?: string;
 }
 
 export class TaskCreatedResponseDto {
