@@ -13,7 +13,10 @@ export default async function Dashboard() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 bg-gray-50">
+    <main className="flex min-h-screen flex-col items-center p-4 md:p-8 bg-grid-pattern">
+      <div className="absolute top-0 -left-4 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-0 -right-4 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
+
       <TaskDashboard token={token.value} userId={userId} />
     </main>
   );

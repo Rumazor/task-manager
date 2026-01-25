@@ -81,61 +81,61 @@ export default function RegisterForm({
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center">
-          Crear una Cuenta
-        </CardTitle>
-        <CardDescription className="text-center">
-          Ingresa tus datos para registrarte
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {error && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="register-email">Correo electrónico</Label>
-            <Input
-              id="register-email"
-              type="email"
-              placeholder="tu@correo.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="register-password">Contraseña</Label>
-            <Input
-              id="register-password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
-            <Input
-              id="confirm-password"
-              type="password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Registrando..." : "Registrar"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <div className="w-full space-y-4 py-2">
+      <div className="space-y-1 mb-4">
+        <h2 className="text-xl font-semibold tracking-tight">Crea una cuenta</h2>
+        <p className="text-sm text-muted-foreground">
+          Ingresa tus datos para empezar a organizar tus tareas
+        </p>
+      </div>
+
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="register-email">Correo electrónico</Label>
+          <Input
+            id="register-email"
+            type="email"
+            placeholder="ejemplo@correo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="h-10"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="register-password">Contraseña</Label>
+          <Input
+            id="register-password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="h-10"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
+          <Input
+            id="confirm-password"
+            type="password"
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className="h-10"
+          />
+        </div>
+        <Button type="submit" className="w-full h-11" disabled={loading}>
+          {loading ? "Registrando..." : "Registrar"}
+        </Button>
+      </form>
+    </div>
   );
 }
