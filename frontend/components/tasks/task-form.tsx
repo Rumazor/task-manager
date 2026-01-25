@@ -59,32 +59,43 @@ export default function TaskForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Input
-          placeholder="Titulo de la tarea"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="mb-2"
-        />
-        <Textarea
-          placeholder="Descripción de la tarea (opcional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={3}
-        />
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
+            Título
+          </label>
+          <Input
+            placeholder="¿Qué hay que hacer?"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className="h-10 focus-visible:ring-primary/20 transition-all shadow-sm"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
+            Descripción
+          </label>
+          <Textarea
+            placeholder="Detalles adicionales (opcional)..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            className="resize-none focus-visible:ring-primary/20 transition-all shadow-sm"
+          />
+        </div>
       </div>
-      <div className="flex space-x-2">
-        <Button type="submit" disabled={loading}>
+      <div className="flex flex-col gap-2 pt-2">
+        <Button type="submit" disabled={loading} className="w-full h-10 shadow-sm">
           {loading
             ? "Guardando..."
             : editingTask
-            ? "Editar tarea"
-            : "Agregar tarea"}
+            ? "Actualizar Tarea"
+            : "Crear Tarea"}
         </Button>
         {editingTask && (
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Cancelar
+          <Button type="button" variant="ghost" onClick={onCancel} className="w-full h-10">
+            Cancelar Edición
           </Button>
         )}
       </div>
