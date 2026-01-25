@@ -100,17 +100,17 @@ export default function TaskForm({
           />
         </div>
       </div>
-      <div className="flex space-x-2">
-        <Button type="submit" disabled={loading}>
+      <div className="flex flex-col gap-2 pt-2">
+        <Button type="submit" disabled={loading} className="w-full h-10 shadow-sm">
           {loading
             ? "Guardando..."
             : editingTask
-            ? "Editar tarea"
-            : "Agregar tarea"}
+            ? "Actualizar Tarea"
+            : "Crear Tarea"}
         </Button>
         {editingTask && (
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Cancelar
+          <Button type="button" variant="ghost" onClick={onCancel} className="w-full h-10">
+            Cancelar Edición
           </Button>
         )}
       </div>
