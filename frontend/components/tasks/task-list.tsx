@@ -89,6 +89,9 @@ export default function TaskList({
                   checked={task.completed}
                   onCheckedChange={() => onToggleCompletion(task.id)}
                   className="mt-1"
+                  aria-label={`Marcar como ${
+                    task.completed ? "incompleta" : "completada"
+                  }`}
                 />
                 <div
                   className={`${
@@ -110,6 +113,16 @@ export default function TaskList({
                         size="sm"
                         className="h-6 w-6 p-0 ml-2"
                         onClick={() => toggleTaskExpansion(task.id)}
+                        aria-label={
+                          isExpanded
+                            ? "Contraer descripción"
+                            : "Expandir descripción"
+                        }
+                        title={
+                          isExpanded
+                            ? "Contraer descripción"
+                            : "Expandir descripción"
+                        }
                       >
                         {isExpanded ? (
                           <ChevronUp className="h-3.5 w-3.5" />
@@ -155,6 +168,8 @@ export default function TaskList({
                   className="h-7 w-7 p-0"
                   onClick={() => onEdit(task)}
                   disabled={task.completed}
+                  aria-label="Editar tarea"
+                  title="Editar tarea"
                 >
                   <Edit className="h-3.5 w-3.5" />
                 </Button>
@@ -163,6 +178,8 @@ export default function TaskList({
                   size="sm"
                   className="h-7 w-7 p-0"
                   onClick={() => handleDeleteClick(task)}
+                  aria-label="Eliminar tarea"
+                  title="Eliminar tarea"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
