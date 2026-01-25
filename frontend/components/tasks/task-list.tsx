@@ -86,41 +86,45 @@ export default function TaskList({
                   : "bg-card border-border hover:border-primary/20 ring-1 ring-transparent hover:ring-primary/5"
               }`}
             >
-              {/* Status Indicator Stripe */}
-              <div className={`absolute left-0 top-0 bottom-0 w-1 ${
-                task.completed ? "bg-muted" : "bg-primary"
-              }`} />
+              <div className="flex items-start gap-2 flex-1 min-w-0">
+                <Checkbox
+                  checked={task.completed}
+                  onCheckedChange={() => onToggleCompletion(task.id)}
+                  className="mt-1"
+                  aria-label={`Marcar como ${
+                    task.completed ? "incompleta" : "completada"
+                  }`}
+                />
+                <div
+                  className={`${
+                    task.completed ? "text-muted-foreground" : ""
+                  } flex-1 min-w-0`}
+                >
+                  <div className="flex items-center justify-between">
+                    <h4
+                      className={`font-medium truncate ${
+                        task.completed ? "line-through" : ""
+                      }`}
+                    >
+                      {task.title}
+                    </h4>
 
-              <div className="flex items-start gap-4">
-                <div className="mt-1">
-                  <Checkbox
-                    checked={task.completed}
-                    onCheckedChange={() => onToggleCompletion(task.id)}
-                    className={`h-5 w-5 rounded-md transition-all ${
-                      task.completed ? "bg-muted-foreground/20 border-muted-foreground/30" : "border-primary/30"
-                    }`}
-                  />
-                </div>
-
-                <div className="flex-1 min-w-0 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1 min-w-0">
-                      <h4
-                        className={`text-base font-semibold tracking-tight transition-all truncate ${
-                          task.completed ? "text-muted-foreground line-through decoration-2" : "text-foreground"
-                        }`}
-                      >
-                        {task.title}
-                      </h4>
-                    </div>
-
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {hasLongDescription && (
                       <Button
                         variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full"
-                        onClick={() => onEdit(task)}
-                        disabled={task.completed}
+                        size="sm"
+                        className="h-6 w-6 p-0 ml-2"
+                        onClick={() => toggleTaskExpansion(task.id)}
+                        aria-label={
+                          isExpanded
+                            ? "Contraer descripción"
+                            : "Expandir descripción"
+                        }
+                        title={
+                          isExpanded
+                            ? "Contraer descripción"
+                            : "Expandir descripción"
+                        }
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -183,7 +187,31 @@ export default function TaskList({
                   </div>
                 </div>
               </div>
-            </div>
+
+              <div className="flex space-x-1 ml-2 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  onClick={() => onEdit(task)}
+                  disabled={task.completed}
+                  aria-label="Editar tarea"
+                  title="Editar tarea"
+                >
+                  <Edit className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  onClick={() => handleDeleteClick(task)}
+                  aria-label="Eliminar tarea"
+                  title="Eliminar tarea"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </li>
           );
         })}
       </div>

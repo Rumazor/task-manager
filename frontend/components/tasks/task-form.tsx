@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import type { Task } from "@/lib/types";
 
 interface TaskFormProps {
@@ -59,29 +60,25 @@ export default function TaskForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
-            Título
-          </label>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="task-title">Título de la tarea</Label>
           <Input
-            placeholder="¿Qué hay que hacer?"
+            id="task-title"
+            placeholder="Ej: Comprar leche"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="h-10 focus-visible:ring-primary/20 transition-all shadow-sm"
           />
         </div>
-        <div className="space-y-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
-            Descripción
-          </label>
+        <div className="space-y-2">
+          <Label htmlFor="task-description">Descripción (opcional)</Label>
           <Textarea
-            placeholder="Detalles adicionales (opcional)..."
+            id="task-description"
+            placeholder="Detalles adicionales sobre la tarea"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            rows={4}
-            className="resize-none focus-visible:ring-primary/20 transition-all shadow-sm"
+            rows={3}
           />
         </div>
       </div>
