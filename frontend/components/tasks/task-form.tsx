@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import type { Task } from "@/lib/types";
 
 interface TaskFormProps {
@@ -59,20 +60,27 @@ export default function TaskForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Input
-          placeholder="Titulo de la tarea"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="mb-2"
-        />
-        <Textarea
-          placeholder="Descripción de la tarea (opcional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={3}
-        />
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="task-title">Título de la tarea</Label>
+          <Input
+            id="task-title"
+            placeholder="Ej: Comprar leche"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="task-description">Descripción (opcional)</Label>
+          <Textarea
+            id="task-description"
+            placeholder="Detalles adicionales sobre la tarea"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+          />
+        </div>
       </div>
       <div className="flex space-x-2">
         <Button type="submit" disabled={loading}>
