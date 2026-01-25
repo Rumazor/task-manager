@@ -100,6 +100,7 @@ export async function getUserFromCookie() {
 
     return {
       id: decoded.id,
+      email: decoded.email,
     };
   } catch (error) {
     console.error("Get user error:", error);

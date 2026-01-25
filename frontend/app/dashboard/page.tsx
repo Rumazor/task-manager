@@ -6,7 +6,7 @@ import { getUserFromCookie } from "@/lib/auth";
 export default async function Dashboard() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
-  const userId = (await getUserFromCookie())?.id ?? null;
+  const user = await getUserFromCookie();
 
   if (!token) {
     redirect("/");
@@ -17,7 +17,7 @@ export default async function Dashboard() {
       <div className="absolute top-0 -left-4 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-0 -right-4 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
 
-      <TaskDashboard token={token.value} userId={userId} />
+      <TaskDashboard token={token.value} userId={user?.id ?? null} userEmail={user?.email ?? null} />
     </main>
   );
 }
