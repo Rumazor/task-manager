@@ -15,15 +15,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTasks } from "@/hooks/useTasks";
 import { Badge } from "@/components/ui/badge";
 import { ModeToggle } from "@/components/mode-toggle";
-import { LogOut, LayoutDashboard, PlusCircle, CheckCircle2 } from "lucide-react";
+import { LogOut, LayoutDashboard, PlusCircle, CheckCircle2, Calendar, Mail } from "lucide-react";
 
 export default function TaskDashboard({
   token,
   userId,
+  userEmail,
 }: {
   token: string;
   userId: string;
+  userEmail: string | null;
 }) {
+  const currentDate = new Date().toLocaleDateString("es-ES", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
   const {
     tasks,
     loading,
@@ -54,13 +62,24 @@ export default function TaskDashboard({
   return (
     <div className="w-full max-w-5xl space-y-8 relative">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/50 backdrop-blur-md border rounded-2xl p-4 md:px-6 shadow-sm ring-1 ring-black/5 dark:ring-white/10">
-        <div className="flex items-center gap-3">
-          <div className="bg-primary p-2 rounded-xl">
-            <CheckCircle2 className="w-6 h-6 text-primary-foreground" />
-          </div>
-          <div>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary p-2 rounded-xl">
+              <CheckCircle2 className="w-6 h-6 text-primary-foreground" />
+            </div>
             <h1 className="text-xl font-bold tracking-tight">TaskFlow</h1>
-            <p className="text-xs text-muted-foreground font-medium">Panel de Control</p>
+          </div>
+          <div className="hidden md:flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5" />
+              <span className="capitalize">{currentDate}</span>
+            </div>
+            {userEmail && (
+              <div className="flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5" />
+                <span>{userEmail}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -70,16 +89,8 @@ export default function TaskDashboard({
             <LogOut className="h-4 w-4 mr-2" />
             Cerrar sesión
           </Button>
-        </CardHeader>
-        <CardContent>
-          <TaskForm
-            onSubmit={(id, title, desc, token, assignedToId) =>
-              handleSubmit(id, title, desc, assignedToId)
-            }
-            editingTask={editingTask}
-            onCancel={handleCancelEdit}
-            token={token}
-          />
+        </div>
+      </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <aside className="lg:col-span-4 space-y-6">

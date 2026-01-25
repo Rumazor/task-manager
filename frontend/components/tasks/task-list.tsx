@@ -126,17 +126,13 @@ export default function TaskList({
                             : "Expandir descripción"
                         }
                       >
-                        <Edit className="h-4 w-4" />
+                        {isExpanded ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-full"
-                        onClick={() => handleDeleteClick(task)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    )}
                   </div>
 
                   {task.description && (
@@ -212,7 +208,7 @@ export default function TaskList({
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
-            </li>
+            </div>
           );
         })}
       </div>
