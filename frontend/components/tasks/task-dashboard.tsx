@@ -70,8 +70,16 @@ export default function TaskDashboard({
             <LogOut className="h-4 w-4 mr-2" />
             Cerrar sesión
           </Button>
-        </div>
-      </header>
+        </CardHeader>
+        <CardContent>
+          <TaskForm
+            onSubmit={(id, title, desc, token, assignedToId) =>
+              handleSubmit(id, title, desc, assignedToId)
+            }
+            editingTask={editingTask}
+            onCancel={handleCancelEdit}
+            token={token}
+          />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <aside className="lg:col-span-4 space-y-6">

@@ -177,11 +177,12 @@ export default function TaskList({
                         </span>
                       </div>
                     )}
-
-                    {task.completed && (
-                      <div className="flex items-center gap-1 text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-tighter">
-                        <div className="w-1 h-1 rounded-full bg-current" />
-                        Completada
+                    {task.assignedTo && (
+                      <div className="flex items-center gap-1 text-blue-600">
+                        <User className="h-3 w-3" />
+                        <span className="truncate max-w-[120px]">
+                          Asignada a: {task.assignedTo.email}
+                        </span>
                       </div>
                     )}
                   </div>

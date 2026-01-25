@@ -43,14 +43,21 @@ export function useTasks(token: string) {
     }
   }
 
-  async function handleSubmit(id: string, title: string, description: string) {
+  async function handleSubmit(
+    id: string,
+    title: string,
+    description: string,
+    assignedToId?: string
+  ) {
     try {
       if (id) {
         const updatedTask = await updateTaskAction(
           Number(id),
           title,
           description,
-          token
+          token,
+          undefined,
+          assignedToId
         );
 
         if (updatedTask.success && updatedTask.task) {
@@ -71,7 +78,8 @@ export function useTasks(token: string) {
           title,
           description,
           false,
-          token
+          token,
+          assignedToId
         );
         if (createdTask.success && createdTask.task) {
           setTasks((prev) => [...prev, createdTask.task.data]);

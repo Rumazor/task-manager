@@ -25,6 +25,9 @@ export class User {
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
+  @OneToMany(() => Task, (task) => task.assignedTo)
+  assigned_tasks: Task[];
+
   @BeforeInsert()
   checkFieldsBeforeInser() {
     {
