@@ -80,7 +80,9 @@ export default function TaskForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="task-title">Título de la tarea</Label>
+          <Label htmlFor="task-title" className="flex items-center gap-1">
+            Título de la tarea <span className="text-destructive">*</span>
+          </Label>
           <Input
             id="task-title"
             placeholder="Ej: Comprar leche"
@@ -90,13 +92,19 @@ export default function TaskForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="task-description">Descripción (opcional)</Label>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="task-description">Descripción (opcional)</Label>
+            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider bg-muted/50 px-1.5 py-0.5 rounded">
+              {description.length} / 500
+            </span>
+          </div>
           <Textarea
             id="task-description"
             placeholder="Detalles adicionales sobre la tarea"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
+            maxLength={500}
           />
         </div>
       </div>

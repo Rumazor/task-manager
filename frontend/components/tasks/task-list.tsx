@@ -15,6 +15,11 @@ import { useState } from "react";
 
 import { formatDate } from "@/lib/utils";
 import DeleteConfirmation from "./delete-confirmation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface TaskListProps {
   tasks: Task[];
@@ -186,27 +191,42 @@ export default function TaskList({
               </div>
 
               <div className="flex space-x-1 ml-2 shrink-0">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => onEdit(task)}
-                  disabled={task.completed}
-                  aria-label="Editar tarea"
-                  title="Editar tarea"
-                >
-                  <Edit className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => handleDeleteClick(task)}
-                  aria-label="Eliminar tarea"
-                  title="Eliminar tarea"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0"
+                        onClick={() => onEdit(task)}
+                        disabled={task.completed}
+                        aria-label="Editar tarea"
+                      >
+                        <Edit className="h-3.5 w-3.5" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {task.completed
+                      ? "No se puede editar una tarea completada"
+                      : "Editar tarea"}
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-7 p-0"
+                      onClick={() => handleDeleteClick(task)}
+                      aria-label="Eliminar tarea"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Eliminar tarea</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           );
