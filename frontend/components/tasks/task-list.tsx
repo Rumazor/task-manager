@@ -3,12 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   Edit,
   Trash2,
   Calendar,
   User,
   ChevronDown,
   ChevronUp,
+  CheckCircle2,
 } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { useState } from "react";
@@ -38,9 +44,20 @@ export default function TaskList({
 
   if (tasks.length === 0) {
     return (
-      <p className="text-center py-4 text-muted-foreground">
-        No se encontraron tareas. ¡Crea una para empezar!
-      </p>
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center space-y-4 bg-grid-pattern rounded-3xl border-2 border-dashed border-muted-foreground/10">
+        <div className="relative">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur opacity-75 animate-pulse" />
+          <div className="relative bg-background p-4 rounded-full shadow-sm ring-1 ring-border">
+            <CheckCircle2 className="w-8 h-8 text-primary/60" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-bold tracking-tight">¡Todo despejado!</h3>
+          <p className="text-muted-foreground max-w-[280px] text-sm leading-relaxed">
+            No tienes tareas pendientes por ahora. Disfruta de tu tiempo libre o agrega algo nuevo.
+          </p>
+        </div>
+      </div>
     );
   }
 
@@ -186,27 +203,36 @@ export default function TaskList({
               </div>
 
               <div className="flex space-x-1 ml-2 shrink-0">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => onEdit(task)}
-                  disabled={task.completed}
-                  aria-label="Editar tarea"
-                  title="Editar tarea"
-                >
-                  <Edit className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => handleDeleteClick(task)}
-                  aria-label="Eliminar tarea"
-                  title="Eliminar tarea"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => onEdit(task)}
+                      disabled={task.completed}
+                      aria-label="Editar tarea"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Editar tarea</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => handleDeleteClick(task)}
+                      aria-label="Eliminar tarea"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Eliminar tarea</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           );
