@@ -6,7 +6,14 @@ import {
   OneToMany,
   CreateDateColumn,
   BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
+
+export enum UserRole {
+  USER = 'user',
+  MANAGER = 'manager',
+  ADMIN = 'admin',
+}
 
 @Entity()
 export class User {
@@ -16,8 +23,33 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
+
+  @Column({ nullable: true })
+  name: string;
+
+  @Column({ nullable: true })
+  avatar: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
+
+  @Column({ type: 'varchar', nullable: true })
+  resetPasswordToken!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  resetPasswordExpires!: Date | null;
+
+  @Column({ nullable: true })
+  googleId: string;
+
+  @Column({ nullable: true })
+  githubId: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -29,15 +61,9 @@ export class User {
   assigned_tasks: Task[];
 
   @BeforeInsert()
-  checkFieldsBeforeInser() {
-    {
-      this.email = this.email.toLowerCase().trim();
-    }
-  }
-
-  @BeforeInsert()
-  checkFieldsBeforeUpdate() {
-    {
+  @BeforeUpdate()
+  normalizeEmail() {
+    if (this.email) {
       this.email = this.email.toLowerCase().trim();
     }
   }

@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -25,4 +26,13 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'La contraseña no puede estar vacía' })
   @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' })
   password: string;
+
+  @ApiPropertyOptional({
+    example: 'Juan Pérez',
+    description: 'Nombre del usuario (opcional)',
+  })
+  @IsOptional()
+  @IsString({ message: 'El nombre debe ser una cadena de texto' })
+  @MaxLength(100, { message: 'El nombre no puede exceder 100 caracteres' })
+  name?: string;
 }

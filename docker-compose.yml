@@ -6,15 +6,22 @@ services:
     ports:
       - "3001:3000"
     environment:
-      DB_HOST: "${DB_HOST}"
-      DB_PORT: "${DB_PORT}"
+      DB_HOST: postgres
+      DB_PORT: "5432"
       DB_NAME: "${DB_NAME}"
       DB_USER: "${DB_USER}"
       DB_PASSWORD: "${DB_PASSWORD}"
       JWT_SECRET: "${JWT_SECRET}"
-
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_TTL: "300"
+      THROTTLE_TTL: "60000"
+      THROTTLE_LIMIT: "100"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - my_network
 
@@ -27,6 +34,7 @@ services:
       - "3000:3000"
     environment:
       BASE_API_URL: "http://nestjs:3000"
+      NEXT_PUBLIC_API_URL: "http://localhost:3001"
     depends_on:
       - nestjs
     networks:
@@ -42,6 +50,26 @@ services:
       POSTGRES_DB: "${DB_NAME}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my_network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - my_network
 
@@ -51,3 +79,4 @@ networks:
 
 volumes:
   postgres_data:
+  redis_data:
