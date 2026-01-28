@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import TaskForm from "./task-form";
 import TaskList from "./task-list";
+import TaskFiltersComponent from "./task-filters";
+import { useSocket } from "@/contexts/socket-context";
 import {
   Card,
   CardContent,
@@ -15,7 +18,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTasks } from "@/hooks/useTasks";
 import { Badge } from "@/components/ui/badge";
 import { ModeToggle } from "@/components/mode-toggle";
-import { LogOut, LayoutDashboard, PlusCircle, CheckCircle2, Calendar, Mail } from "lucide-react";
+import { LogOut, LayoutDashboard, PlusCircle, CheckCircle2, Calendar, Mail, Kanban, List, Users, Wifi, WifiOff } from "lucide-react";
+
+// Dynamic import para evitar problemas de SSR con drag & drop
+const KanbanBoard = dynamic(() => import("@/components/kanban/kanban-board"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center py-12">
+      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  ),
+});
 
 export default function TaskDashboard({
   token,
@@ -36,15 +49,51 @@ export default function TaskDashboard({
     tasks,
     loading,
     editingTask,
+    filters,
     handleSubmit,
     handleDeleteTask,
     handleToggleCompletion,
     handleEditTask,
     handleCancelEdit,
+    handleFilterChange,
     handleLogout,
   } = useTasks(token);
 
   const [activeFilter, setActiveFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
+
+  // Real-time socket connection
+  const { isConnected, onlineCount, subscribe } = useSocket();
+
+  // Subscribe to real-time task events
+  useEffect(() => {
+    const unsubCreated = subscribe("task:created", (data) => {
+      // Refresh tasks when a new task is created by another user
+      if (data.creatorId !== userId) {
+        handleFilterChange(filters);
+      }
+    });
+
+    const unsubUpdated = subscribe("task:updated", (data) => {
+      // Refresh tasks when a task is updated
+      if (data.updaterId !== userId) {
+        handleFilterChange(filters);
+      }
+    });
+
+    const unsubDeleted = subscribe("task:deleted", (data) => {
+      // Refresh tasks when a task is deleted
+      if (data.deleterId !== userId) {
+        handleFilterChange(filters);
+      }
+    });
+
+    return () => {
+      unsubCreated();
+      unsubUpdated();
+      unsubDeleted();
+    };
+  }, [subscribe, userId, filters, handleFilterChange]);
 
   const filteredTasks = tasks.filter((task) => {
     if (activeFilter === "mis-tareas") {
@@ -58,6 +107,20 @@ export default function TaskDashboard({
   const myTasksCount = tasks.filter((task) => task.user_id === userId).length;
   const completedTasksCount = tasks.filter((task) => task.completed).length;
   const allTasksCount = tasks.length;
+
+  // Count tasks by priority
+  const highPriorityCount = tasks.filter((t) => t.priority === 'high' && !t.completed).length;
+
+  // Prepare tasks for kanban view
+  const kanbanTasks = {
+    todo: filteredTasks.filter((t) => !t.completed),
+    completed: filteredTasks.filter((t) => t.completed),
+  };
+
+  // Callback when tasks change in kanban (to refresh the list)
+  const handleTasksChange = () => {
+    // The useTasks hook should handle this, but we can force a refresh if needed
+  };
 
   return (
     <div className="w-full max-w-5xl space-y-8 relative">
@@ -84,10 +147,30 @@ export default function TaskDashboard({
         </div>
 
         <div className="flex items-center gap-2 self-end md:self-center">
+          {/* Online status indicator */}
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-muted/50 rounded-lg text-xs">
+            {isConnected ? (
+              <>
+                <Wifi className="w-3.5 h-3.5 text-green-500" />
+                <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-muted-foreground">{onlineCount}</span>
+              </>
+            ) : (
+              <>
+                <WifiOff className="w-3.5 h-3.5 text-red-500" />
+                <span className="text-muted-foreground">Offline</span>
+              </>
+            )}
+          </div>
+          {highPriorityCount > 0 && (
+            <Badge variant="destructive" className="text-xs">
+              {highPriorityCount} urgente{highPriorityCount !== 1 ? 's' : ''}
+            </Badge>
+          )}
           <ModeToggle />
           <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-destructive transition-colors">
             <LogOut className="h-4 w-4 mr-2" />
-            Cerrar sesión
+            Cerrar sesion
           </Button>
         </div>
       </header>
@@ -104,7 +187,7 @@ export default function TaskDashboard({
             </CardHeader>
             <CardContent className="pt-6">
               <TaskForm
-                onSubmit={(id, title, desc) => handleSubmit(id, title, desc)}
+                onSubmit={handleSubmit}
                 editingTask={editingTask}
                 onCancel={handleCancelEdit}
                 token={token}
@@ -120,87 +203,113 @@ export default function TaskDashboard({
               className="w-full"
               onValueChange={setActiveFilter}
             >
-              <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b">
-                <div className="flex items-center gap-2">
-                  <LayoutDashboard className="w-5 h-5 text-muted-foreground" />
-                  <h3 className="font-semibold">Tus Tareas</h3>
+              <div className="p-4 flex flex-col gap-4 border-b">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <LayoutDashboard className="w-5 h-5 text-muted-foreground" />
+                      <h3 className="font-semibold">Tus Tareas</h3>
+                    </div>
+                    {/* View mode toggle */}
+                    <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+                      <Button
+                        variant={viewMode === "list" ? "secondary" : "ghost"}
+                        size="sm"
+                        onClick={() => setViewMode("list")}
+                        className="h-7 px-2"
+                      >
+                        <List className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant={viewMode === "kanban" ? "secondary" : "ghost"}
+                        size="sm"
+                        onClick={() => setViewMode("kanban")}
+                        className="h-7 px-2"
+                      >
+                        <Kanban className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <TabsList className="bg-muted/50">
+                    <TabsTrigger value="all" className="data-[state=active]:bg-background">
+                      Todas
+                      <Badge variant="secondary" className="ml-2 bg-background/50">
+                        {allTasksCount}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="mis-tareas"
+                      className="data-[state=active]:bg-background"
+                    >
+                      Mias
+                      <Badge variant="secondary" className="ml-2 bg-background/50">
+                        {myTasksCount}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="completadas"
+                      className="data-[state=active]:bg-background"
+                    >
+                      Hechas
+                      <Badge variant="secondary" className="ml-2 bg-background/50">
+                        {completedTasksCount}
+                      </Badge>
+                    </TabsTrigger>
+                  </TabsList>
                 </div>
-                <TabsList className="bg-muted/50">
-                  <TabsTrigger value="all" className="data-[state=active]:bg-background">
-                    Todas
-                    <Badge variant="secondary" className="ml-2 bg-background/50">
-                      {allTasksCount}
-                    </Badge>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="mis-tareas"
-                    className="data-[state=active]:bg-background"
-                  >
-                    Mías
-                    <Badge variant="secondary" className="ml-2 bg-background/50">
-                      {myTasksCount}
-                    </Badge>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="completadas"
-                    className="data-[state=active]:bg-background"
-                  >
-                    Hechas
-                    <Badge variant="secondary" className="ml-2 bg-background/50">
-                      {completedTasksCount}
-                    </Badge>
-                  </TabsTrigger>
-                </TabsList>
+
+                <TaskFiltersComponent
+                  token={token}
+                  onFilterChange={handleFilterChange}
+                  activeFilters={filters}
+                />
               </div>
 
-              <div className="p-4">
-                <TabsContent value="all" className="mt-0 focus-visible:ring-0">
-                  {loading ? (
-                    <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                      <p className="text-sm text-muted-foreground animate-pulse">Cargando tareas...</p>
-                    </div>
-                  ) : (
-                    <TaskList
-                      tasks={filteredTasks}
-                      onDelete={handleDeleteTask}
-                      onToggleCompletion={handleToggleCompletion}
-                      onEdit={handleEditTask}
+              <div className="p-4 overflow-hidden">
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                    <p className="text-sm text-muted-foreground animate-pulse">Cargando tareas...</p>
+                  </div>
+                ) : viewMode === "kanban" ? (
+                  <div className="overflow-x-auto -mx-4 px-4">
+                    <KanbanBoard
+                      tasks={kanbanTasks}
+                      token={token}
+                      onTaskClick={handleEditTask}
+                      onTasksChange={handleTasksChange}
                     />
-                  )}
-                </TabsContent>
+                  </div>
+                ) : (
+                  <>
+                    <TabsContent value="all" className="mt-0 focus-visible:ring-0">
+                      <TaskList
+                        tasks={filteredTasks}
+                        onDelete={handleDeleteTask}
+                        onToggleCompletion={handleToggleCompletion}
+                        onEdit={handleEditTask}
+                      />
+                    </TabsContent>
 
-                <TabsContent value="mis-tareas" className="mt-0 focus-visible:ring-0">
-                  {loading ? (
-                    <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                      <p className="text-sm text-muted-foreground animate-pulse">Cargando tareas...</p>
-                    </div>
-                  ) : (
-                    <TaskList
-                      tasks={filteredTasks}
-                      onDelete={handleDeleteTask}
-                      onToggleCompletion={handleToggleCompletion}
-                      onEdit={handleEditTask}
-                    />
-                  )}
-                </TabsContent>
+                    <TabsContent value="mis-tareas" className="mt-0 focus-visible:ring-0">
+                      <TaskList
+                        tasks={filteredTasks}
+                        onDelete={handleDeleteTask}
+                        onToggleCompletion={handleToggleCompletion}
+                        onEdit={handleEditTask}
+                      />
+                    </TabsContent>
 
-                <TabsContent value="completadas" className="mt-0 focus-visible:ring-0">
-                  {loading ? (
-                    <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                      <p className="text-sm text-muted-foreground animate-pulse">Cargando tareas...</p>
-                    </div>
-                  ) : (
-                    <TaskList
-                      tasks={filteredTasks}
-                      onDelete={handleDeleteTask}
-                      onToggleCompletion={handleToggleCompletion}
-                      onEdit={handleEditTask}
-                    />
-                  )}
-                </TabsContent>
+                    <TabsContent value="completadas" className="mt-0 focus-visible:ring-0">
+                      <TaskList
+                        tasks={filteredTasks}
+                        onDelete={handleDeleteTask}
+                        onToggleCompletion={handleToggleCompletion}
+                        onEdit={handleEditTask}
+                      />
+                    </TabsContent>
+                  </>
+                )}
               </div>
             </Tabs>
           </div>

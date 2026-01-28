@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   Edit,
   Trash2,
@@ -9,18 +10,72 @@ import {
   User,
   ChevronDown,
   ChevronUp,
+  Clock,
+  AlertTriangle,
+  ChevronRight,
 } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { useState } from "react";
-
 import { formatDate } from "@/lib/utils";
 import DeleteConfirmation from "./delete-confirmation";
+import { format, isPast, isToday, isTomorrow } from "date-fns";
+import { es } from "date-fns/locale";
 
 interface TaskListProps {
   tasks: Task[];
   onDelete: (id: string) => Promise<void>;
   onToggleCompletion: (id: string) => Promise<void>;
   onEdit: (task: Task) => void;
+}
+
+const priorityConfig = {
+  low: {
+    label: "Baja",
+    className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300",
+    dotColor: "bg-green-500",
+  },
+  medium: {
+    label: "Media",
+    className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300",
+    dotColor: "bg-yellow-500",
+  },
+  high: {
+    label: "Alta",
+    className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300",
+    dotColor: "bg-red-500",
+  },
+};
+
+function getDueDateInfo(dueDate: string) {
+  const date = new Date(dueDate);
+  const isOverdue = isPast(date) && !isToday(date);
+
+  if (isOverdue) {
+    return {
+      label: "Vencida",
+      className: "text-red-600 dark:text-red-400",
+      icon: AlertTriangle,
+    };
+  }
+  if (isToday(date)) {
+    return {
+      label: "Hoy",
+      className: "text-orange-600 dark:text-orange-400",
+      icon: Clock,
+    };
+  }
+  if (isTomorrow(date)) {
+    return {
+      label: "Manana",
+      className: "text-blue-600 dark:text-blue-400",
+      icon: Calendar,
+    };
+  }
+  return {
+    label: format(date, "d MMM", { locale: es }),
+    className: "text-muted-foreground",
+    icon: Calendar,
+  };
 }
 
 export default function TaskList({
@@ -32,14 +87,13 @@ export default function TaskList({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [expandedTasks, setExpandedTasks] = useState<Record<string, boolean>>(
-    {}
-  );
+  const [expandedTasks, setExpandedTasks] = useState<Record<string, boolean>>({});
+  const [expandedSubtasks, setExpandedSubtasks] = useState<Record<string, boolean>>({});
 
   if (tasks.length === 0) {
     return (
       <p className="text-center py-4 text-muted-foreground">
-        No se encontraron tareas. ¡Crea una para empezar!
+        No se encontraron tareas. Crea una para empezar!
       </p>
     );
   }
@@ -69,13 +123,23 @@ export default function TaskList({
     }));
   };
 
+  const toggleSubtasksExpansion = (taskId: string) => {
+    setExpandedSubtasks((prev) => ({
+      ...prev,
+      [taskId]: !prev[taskId],
+    }));
+  };
+
   return (
     <>
       <div className="space-y-4">
         {tasks.map((task) => {
           const isExpanded = !!expandedTasks[task.id];
-          const hasLongDescription =
-            task.description && task.description.length > 80;
+          const hasLongDescription = task.description && task.description.length > 80;
+          const priority = task.priority || 'medium';
+          const priorityInfo = priorityConfig[priority];
+          const hasSubtasks = task.subtasks && task.subtasks.length > 0;
+          const subtasksExpanded = !!expandedSubtasks[task.id];
 
           return (
             <div
@@ -91,52 +155,42 @@ export default function TaskList({
                   checked={task.completed}
                   onCheckedChange={() => onToggleCompletion(task.id)}
                   className="mt-1"
-                  aria-label={`Marcar como ${
-                    task.completed ? "incompleta" : "completada"
-                  }`}
+                  aria-label={`Marcar como ${task.completed ? "incompleta" : "completada"}`}
                 />
-                <div
-                  className={`${
-                    task.completed ? "text-muted-foreground" : ""
-                  } flex-1 min-w-0`}
-                >
-                  <div className="flex items-center justify-between">
-                    <h4
-                      className={`font-medium truncate ${
-                        task.completed ? "line-through" : ""
-                      }`}
-                    >
-                      {task.title}
-                    </h4>
+                <div className={`${task.completed ? "text-muted-foreground" : ""} flex-1 min-w-0`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <h4 className={`font-medium truncate ${task.completed ? "line-through" : ""}`}>
+                        {task.title}
+                      </h4>
 
-                    {hasLongDescription && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 ml-2"
-                        onClick={() => toggleTaskExpansion(task.id)}
-                        aria-label={
-                          isExpanded
-                            ? "Contraer descripción"
-                            : "Expandir descripción"
-                        }
-                        title={
-                          isExpanded
-                            ? "Contraer descripción"
-                            : "Expandir descripción"
-                        }
-                      >
-                        {isExpanded ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </Button>
-                    )}
+                      <Badge variant="secondary" className={`shrink-0 text-xs px-2 py-0 ${priorityInfo.className}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full mr-1 ${priorityInfo.dotColor}`} />
+                        {priorityInfo.label}
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      {hasLongDescription && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => toggleTaskExpansion(task.id)}
+                          aria-label={isExpanded ? "Contraer descripcion" : "Expandir descripcion"}
+                        >
+                          {isExpanded ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      )}
+                    </div>
                   </div>
 
                   {task.description && (
-                    <div className="relative">
+                    <div className="relative mt-1">
                       <p
                         className={`text-sm leading-relaxed transition-all duration-300 ${
                           task.completed ? "text-muted-foreground/60" : "text-muted-foreground"
@@ -149,13 +203,87 @@ export default function TaskList({
                           onClick={() => toggleTaskExpansion(task.id)}
                           className="text-xs font-semibold text-primary hover:underline mt-1 focus:outline-none"
                         >
-                          {isExpanded ? "Ver menos" : "Ver más"}
+                          {isExpanded ? "Ver menos" : "Ver mas"}
                         </button>
                       )}
                     </div>
                   )}
 
-                  <div className="flex flex-wrap items-center gap-y-2 gap-x-4 pt-2 border-t border-muted/30">
+                  {/* Tags */}
+                  {task.tags && task.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {task.tags.map((tag) => (
+                        <Badge
+                          key={tag.id}
+                          variant="outline"
+                          className="text-xs px-2 py-0"
+                          style={{
+                            borderColor: tag.color,
+                            color: tag.color,
+                          }}
+                        >
+                          {tag.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Subtasks */}
+                  {hasSubtasks && (
+                    <div className="mt-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                        onClick={() => toggleSubtasksExpansion(task.id)}
+                      >
+                        <ChevronRight
+                          className={`h-3 w-3 mr-1 transition-transform ${
+                            subtasksExpanded ? "rotate-90" : ""
+                          }`}
+                        />
+                        {task.subtasks!.length} subtareas
+                        <span className="ml-1 text-muted-foreground/60">
+                          ({task.subtasks!.filter((s) => s.completed).length} completadas)
+                        </span>
+                      </Button>
+
+                      {subtasksExpanded && (
+                        <div className="mt-2 ml-4 space-y-1 border-l-2 border-muted pl-3">
+                          {task.subtasks!.map((subtask) => (
+                            <div
+                              key={subtask.id}
+                              className={`flex items-center gap-2 text-sm ${
+                                subtask.completed ? "text-muted-foreground line-through" : ""
+                              }`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  priorityConfig[subtask.priority || 'medium'].dotColor
+                                }`}
+                              />
+                              {subtask.title}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center gap-y-2 gap-x-4 pt-2 border-t border-muted/30 mt-2">
+                    {/* Due date */}
+                    {task.dueDate && !task.completed && (
+                      <div className={`flex items-center gap-1.5 text-xs font-medium ${getDueDateInfo(task.dueDate).className}`}>
+                        <div className="bg-muted p-1 rounded-sm">
+                          {(() => {
+                            const Icon = getDueDateInfo(task.dueDate).icon;
+                            return <Icon className="h-3 w-3" />;
+                          })()}
+                        </div>
+                        <span>{getDueDateInfo(task.dueDate).label}</span>
+                      </div>
+                    )}
+
                     <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                       <div className="bg-muted p-1 rounded-sm">
                         <Calendar className="h-3 w-3" />
@@ -168,13 +296,12 @@ export default function TaskList({
                         <div className="bg-muted p-1 rounded-sm">
                           <User className="h-3 w-3" />
                         </div>
-                        <span className="truncate max-w-[150px]">
-                          {task.created_by}
-                        </span>
+                        <span className="truncate max-w-[150px]">{task.created_by}</span>
                       </div>
                     )}
+
                     {task.assignedTo && (
-                      <div className="flex items-center gap-1 text-blue-600">
+                      <div className="flex items-center gap-1 text-blue-600 text-xs">
                         <User className="h-3 w-3" />
                         <span className="truncate max-w-[120px]">
                           Asignada a: {task.assignedTo.email}
@@ -185,7 +312,7 @@ export default function TaskList({
                 </div>
               </div>
 
-              <div className="flex space-x-1 ml-2 shrink-0">
+              <div className="flex space-x-1 ml-2 shrink-0 absolute top-4 right-4">
                 <Button
                   variant="ghost"
                   size="sm"

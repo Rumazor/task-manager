@@ -1,11 +1,35 @@
-# services:
-#   db:
-#     image: postgres:14.3
-#     restart: always
-#     ports:
-#       - '${DB_PORT}:${DB_PORT}'
-#     environment:
-#       POSTGRES_PASSWORD: ${DB_PASSWORD}
-#       POSTGRES_DB: ${DB_NAME}
-#     volumes:
-#       - ./posgres:/var/lib/postgresql/data
+services:
+  db:
+    image: postgres:14.3
+    restart: always
+    ports:
+      - '${DB_PORT}:5432'
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

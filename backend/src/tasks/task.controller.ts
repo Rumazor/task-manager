@@ -6,6 +6,7 @@ import {
   Delete,
   Param,
   Body,
+  Query,
   UseGuards,
   Req,
   ParseIntPipe,
@@ -16,6 +17,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 import { TaskService } from './task.service';
@@ -26,6 +28,7 @@ import { UpdateTaskDto } from './dto/update-dto';
 import { OwnerGuard } from 'src/common/guards/task-owner.guard';
 import { CreateTaskDto, TaskCreatedResponseDto } from './dto/create-task.dto';
 import { TaskResponseDto } from './dto/find-one.dto';
+import { TaskFilterDto } from './dto/task-filter.dto';
 
 @Controller('tasks')
 @ApiTags('Tasks')
@@ -47,14 +50,22 @@ export class TaskController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todas las tareas' })
+  @ApiOperation({ summary: 'Obtener todas las tareas con filtros' })
+  @ApiQuery({ name: 'priority', required: false, enum: ['low', 'medium', 'high'] })
+  @ApiQuery({ name: 'tagId', required: false, type: Number })
+  @ApiQuery({ name: 'dueBefore', required: false, type: String })
+  @ApiQuery({ name: 'dueAfter', required: false, type: String })
+  @ApiQuery({ name: 'completed', required: false, type: Boolean })
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiResponse({
     status: 200,
     description: 'Lista de tareas obtenida correctamente.',
     type: [TaskResponseDto],
   })
-  async findAll() {
-    return this.taskService.findAll();
+  async findAll(@Query() filters: TaskFilterDto) {
+    return this.taskService.findAll(filters);
   }
 
   @Get(':id')
@@ -70,6 +81,14 @@ export class TaskController {
     return this.taskService.findOne(id);
   }
 
+  @Patch('reorder')
+  @ApiOperation({ summary: 'Reordenar tareas' })
+  @ApiResponse({ status: 200, description: 'Tareas reordenadas correctamente.' })
+  async reorderTasks(@Body() taskOrders: { id: number; position: number }[]) {
+    await this.taskService.reorderTasks(taskOrders);
+    return { message: 'Tasks reordered successfully' };
+  }
+
   @Patch(':id')
   @UseGuards(OwnerGuard)
   @ApiOperation({ summary: 'Actualizar una tarea' })
@@ -83,8 +102,9 @@ export class TaskController {
   async updateTask(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
+    @GetUser() user: User,
   ) {
-    const updatedTask = await this.taskService.updateTask(id, updateTaskDto);
+    const updatedTask = await this.taskService.updateTask(id, updateTaskDto, user);
 
     const { user: userInfo, ...task } = updatedTask;
     return task;

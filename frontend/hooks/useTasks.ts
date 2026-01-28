@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { logoutAction } from "@/lib/auth";
 
-import type { Task } from "@/lib/types";
+import type { Task, TaskFilters } from "@/lib/types";
 import {
   createTaskAction,
   deleteTaskAction,
@@ -15,20 +15,21 @@ export function useTasks(token: string) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [filters, setFilters] = useState<TaskFilters>({});
 
   const { toast } = useToast();
   const router = useRouter();
 
-  async function loadTasks() {
+  const loadTasks = useCallback(async (currentFilters?: TaskFilters) => {
     try {
       setLoading(true);
-      const result = await getTasksAction(token);
+      const result = await getTasksAction(token, currentFilters);
       if (result.success && result.tasks) {
         setTasks(result.tasks);
       } else {
         toast({
           title: "Error",
-          description: result.error || "Ocurrió un error al cargar las tareas.",
+          description: result.error || "Ocurrio un error al cargar las tareas.",
           variant: "destructive",
         });
       }
@@ -41,13 +42,17 @@ export function useTasks(token: string) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [token, toast]);
 
   async function handleSubmit(
     id: string,
     title: string,
     description: string,
-    assignedToId?: string
+    _token?: string,
+    assignedToId?: string,
+    dueDate?: string,
+    priority?: 'low' | 'medium' | 'high',
+    tagIds?: number[]
   ) {
     try {
       if (id) {
@@ -57,7 +62,10 @@ export function useTasks(token: string) {
           description,
           token,
           undefined,
-          assignedToId
+          assignedToId,
+          dueDate,
+          priority,
+          tagIds
         );
 
         if (updatedTask.success && updatedTask.task) {
@@ -66,7 +74,7 @@ export function useTasks(token: string) {
           );
           setEditingTask(null);
           toast({
-            title: "Éxito",
+            title: "Exito",
             description: "Tarea modificada exitosamente.",
           });
         } else {
@@ -79,12 +87,15 @@ export function useTasks(token: string) {
           description,
           false,
           token,
-          assignedToId
+          assignedToId,
+          dueDate,
+          priority,
+          tagIds
         );
         if (createdTask.success && createdTask.task) {
           setTasks((prev) => [...prev, createdTask.task.data]);
           toast({
-            title: "Éxito",
+            title: "Exito",
             description: "Tarea creada exitosamente.",
           });
         } else {
@@ -106,7 +117,7 @@ export function useTasks(token: string) {
       if (deleted.success) {
         setTasks((prev) => prev.filter((task) => task.id !== id));
         toast({
-          title: "Éxito",
+          title: "Exito",
           description: "Tarea borrada exitosamente",
         });
       } else {
@@ -128,8 +139,8 @@ export function useTasks(token: string) {
 
       const updated = await updateTaskAction(
         Number(id),
-        task.title,
-        task.description ?? "",
+        undefined,
+        undefined,
         token,
         !task.completed
       );
@@ -137,9 +148,9 @@ export function useTasks(token: string) {
       if (updated.success && updated.task) {
         setTasks((prev) => prev.map((t) => (t.id === id ? updated.task : t)));
         toast({
-          title: "Success",
-          description: `Task marked as ${
-            updated.task.completed ? "completed" : "incomplete"
+          title: "Exito",
+          description: `Tarea marcada como ${
+            updated.task.completed ? "completada" : "pendiente"
           }.`,
         });
       } else {
@@ -162,36 +173,44 @@ export function useTasks(token: string) {
     setEditingTask(null);
   }
 
+  function handleFilterChange(newFilters: TaskFilters) {
+    setFilters(newFilters);
+    loadTasks(newFilters);
+  }
+
   async function handleLogout() {
     try {
       await logoutAction();
       router.push("/");
       toast({
-        title: "Sesión cerrada",
-        description: "Has cerrado sesión correctamente.",
+        title: "Sesion cerrada",
+        description: "Has cerrado sesion correctamente.",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Error al cerrar sesión.",
+        description: "Error al cerrar sesion.",
         variant: "destructive",
       });
     }
   }
 
   useEffect(() => {
-    loadTasks();
+    loadTasks(filters);
   }, []);
 
   return {
     tasks,
     loading,
     editingTask,
+    filters,
     handleSubmit,
     handleDeleteTask,
     handleToggleCompletion,
     handleEditTask,
     handleCancelEdit,
+    handleFilterChange,
     handleLogout,
+    loadTasks,
   };
 }

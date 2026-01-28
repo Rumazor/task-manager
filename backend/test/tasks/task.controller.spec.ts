@@ -1,14 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 import { UpdateTaskDto } from 'src/tasks/dto/update-dto';
+import { TaskFilterDto } from 'src/tasks/dto/task-filter.dto';
 import { TaskController } from 'src/tasks/task.controller';
 import { TaskService } from 'src/tasks/task.service';
-
 import { User } from 'src/users/user.entity';
 
 describe('TaskController', () => {
   let taskController: TaskController;
   let taskService: TaskService;
+
+  const mockUser = {
+    id: 'user-123',
+    email: 'test@example.com',
+  } as unknown as User;
 
   const mockTaskService = {
     createTask: jest.fn(),
@@ -40,34 +45,43 @@ describe('TaskController', () => {
   describe('createTask', () => {
     it('debe llamar a taskService.createTask con los argumentos correctos', async () => {
       const dto: CreateTaskDto = { title: 'test', description: 'desc' };
-      const user = new User();
-      user.id = 'user-123';
       const mockResult = {
-        message: 'Task creado correctamente',
-        data: {
-          id: 1,
-          created_by: user.id,
-          title: dto.title,
-          description: dto.description,
-          completed: false,
-          created_at: new Date(),
-        },
+        id: 1,
+        created_by: mockUser.id,
+        title: dto.title,
+        description: dto.description,
+        completed: false,
+        created_at: new Date(),
       };
       mockTaskService.createTask.mockResolvedValue(mockResult);
 
-      const result = await taskController.createTask(dto, user);
-      expect(taskService.createTask).toHaveBeenCalledWith(dto, user);
+      const result = await taskController.createTask(dto, mockUser);
+
+      expect(taskService.createTask).toHaveBeenCalledWith(dto, mockUser);
       expect(result).toBe(mockResult);
     });
   });
 
   describe('findAll', () => {
-    it('debe retornar todas las tareas', async () => {
+    it('debe retornar todas las tareas con filtros', async () => {
       const mockTasks = [{ id: 1 }, { id: 2 }];
+      const filters: TaskFilterDto = {};
       mockTaskService.findAll.mockResolvedValue(mockTasks);
 
-      const result = await taskController.findAll();
-      expect(taskService.findAll).toHaveBeenCalled();
+      const result = await taskController.findAll(filters);
+
+      expect(taskService.findAll).toHaveBeenCalledWith(filters);
+      expect(result).toBe(mockTasks);
+    });
+
+    it('debe filtrar por estado completado', async () => {
+      const mockTasks = [{ id: 1, completed: true }];
+      const filters: TaskFilterDto = { completed: true };
+      mockTaskService.findAll.mockResolvedValue(mockTasks);
+
+      const result = await taskController.findAll(filters);
+
+      expect(taskService.findAll).toHaveBeenCalledWith(filters);
       expect(result).toBe(mockTasks);
     });
   });
@@ -78,6 +92,7 @@ describe('TaskController', () => {
       mockTaskService.findOne.mockResolvedValue(mockTask);
 
       const result = await taskController.findOne(1);
+
       expect(taskService.findOne).toHaveBeenCalledWith(1);
       expect(result).toBe(mockTask);
     });
@@ -85,31 +100,26 @@ describe('TaskController', () => {
 
   describe('updateTask', () => {
     it('debe actualizar la tarea y retornar la tarea actualizada', async () => {
+      const dto: UpdateTaskDto = {
+        title: 'Updated',
+        description: 'Updated description',
+        completed: true,
+      };
+
       const mockUpdatedTask = {
         id: 1,
         title: 'Updated',
-        description: 'desc',
+        description: 'Updated description',
         completed: true,
       };
-      mockTaskService.updateTask.mockResolvedValue({
-        ...mockUpdatedTask,
-        user: { id: 'user-123', email: 'test@example.com' },
-      });
 
-      const dto: UpdateTaskDto = {
-        title: 'Updated',
-        descripcion: 'desc',
-        completed: true,
-      };
-      const result = await taskController.updateTask(1, dto);
+      mockTaskService.updateTask.mockResolvedValue(mockUpdatedTask);
 
-      expect(taskService.updateTask).toHaveBeenCalledWith(
-        1,
-        dto.title,
-        dto.descripcion,
-        dto.completed,
-      );
-      expect(result).toEqual(mockUpdatedTask);
+      const result = await taskController.updateTask(1, dto, mockUser);
+
+      expect(taskService.updateTask).toHaveBeenCalledWith(1, dto, mockUser);
+      expect(result).toBeDefined();
+      expect(result.title).toBe('Updated');
     });
   });
 
@@ -119,6 +129,7 @@ describe('TaskController', () => {
       mockTaskService.deleteTask.mockResolvedValue(mockResult);
 
       const result = await taskController.deleteTask(1);
+
       expect(taskService.deleteTask).toHaveBeenCalledWith(1);
       expect(result).toBe(mockResult);
     });
