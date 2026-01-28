@@ -13,6 +13,7 @@ import {
   Clock,
   AlertTriangle,
   ChevronRight,
+  ClipboardList,
 } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { useState } from "react";
@@ -66,7 +67,7 @@ function getDueDateInfo(dueDate: string) {
   }
   if (isTomorrow(date)) {
     return {
-      label: "Manana",
+      label: "Mañana",
       className: "text-blue-600 dark:text-blue-400",
       icon: Calendar,
     };
@@ -92,9 +93,17 @@ export default function TaskList({
 
   if (tasks.length === 0) {
     return (
-      <p className="text-center py-4 text-muted-foreground">
-        No se encontraron tareas. Crea una para empezar!
-      </p>
+      <div className="flex flex-col items-center justify-center py-12 px-4 text-center space-y-4 border-2 border-dashed rounded-2xl bg-muted/20 animate-in fade-in duration-500">
+        <div className="bg-background p-4 rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/10">
+          <ClipboardList className="w-8 h-8 text-muted-foreground/60" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="font-semibold text-lg tracking-tight">No hay tareas pendientes</h3>
+          <p className="text-sm text-muted-foreground max-w-[280px] leading-relaxed">
+            ¡Todo despejado! Has completado tus tareas o aún no has empezado. Crea una nueva para organizarte.
+          </p>
+        </div>
+      </div>
     );
   }
 
@@ -177,7 +186,8 @@ export default function TaskList({
                           size="sm"
                           className="h-6 w-6 p-0"
                           onClick={() => toggleTaskExpansion(task.id)}
-                          aria-label={isExpanded ? "Contraer descripcion" : "Expandir descripcion"}
+                          aria-label={isExpanded ? "Contraer descripción" : "Expandir descripción"}
+                          aria-expanded={isExpanded}
                         >
                           {isExpanded ? (
                             <ChevronUp className="h-4 w-4" />
@@ -203,7 +213,7 @@ export default function TaskList({
                           onClick={() => toggleTaskExpansion(task.id)}
                           className="text-xs font-semibold text-primary hover:underline mt-1 focus:outline-none"
                         >
-                          {isExpanded ? "Ver menos" : "Ver mas"}
+                          {isExpanded ? "Ver menos" : "Ver más"}
                         </button>
                       )}
                     </div>
@@ -236,6 +246,8 @@ export default function TaskList({
                         size="sm"
                         className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
                         onClick={() => toggleSubtasksExpansion(task.id)}
+                        aria-expanded={subtasksExpanded}
+                        aria-label={`${subtasksExpanded ? 'Contraer' : 'Expandir'} subtareas`}
                       >
                         <ChevronRight
                           className={`h-3 w-3 mr-1 transition-transform ${
