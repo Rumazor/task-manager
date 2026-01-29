@@ -1,0 +1,3 @@
+## 2025-01-29 - [Spanish Linguistic Quality & Tooltip Foundation]
+**Learning:** Found a systemic pattern of missing Spanish accents (tildes) in button labels, ARIA labels, and form fields, which negatively impacts professionalism and screen reader pronunciation. Also discovered that `TooltipProvider` was missing from the global layout, preventing the use of accessible tooltips.
+**Action:** Always verify linguistic correctness in Spanish (check common words like 'Mañana', 'más', 'descripción', 'Título') and ensure `TooltipProvider` is available at the root level before implementing new tooltips.

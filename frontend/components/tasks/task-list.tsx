@@ -4,6 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   Edit,
   Trash2,
   Calendar,
@@ -66,7 +71,7 @@ function getDueDateInfo(dueDate: string) {
   }
   if (isTomorrow(date)) {
     return {
-      label: "Manana",
+      label: "Mañana",
       className: "text-blue-600 dark:text-blue-400",
       icon: Calendar,
     };
@@ -172,19 +177,26 @@ export default function TaskList({
 
                     <div className="flex items-center gap-1">
                       {hasLongDescription && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0"
-                          onClick={() => toggleTaskExpansion(task.id)}
-                          aria-label={isExpanded ? "Contraer descripcion" : "Expandir descripcion"}
-                        >
-                          {isExpanded ? (
-                            <ChevronUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4" />
-                          )}
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={() => toggleTaskExpansion(task.id)}
+                              aria-label={isExpanded ? "Contraer descripción" : "Expandir descripción"}
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            {isExpanded ? "Ver menos" : "Ver más"}
+                          </TooltipContent>
+                        </Tooltip>
                       )}
                     </div>
                   </div>
@@ -203,7 +215,7 @@ export default function TaskList({
                           onClick={() => toggleTaskExpansion(task.id)}
                           className="text-xs font-semibold text-primary hover:underline mt-1 focus:outline-none"
                         >
-                          {isExpanded ? "Ver menos" : "Ver mas"}
+                          {isExpanded ? "Ver menos" : "Ver más"}
                         </button>
                       )}
                     </div>
@@ -313,27 +325,35 @@ export default function TaskList({
               </div>
 
               <div className="flex space-x-1 ml-2 shrink-0 absolute top-4 right-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => onEdit(task)}
-                  disabled={task.completed}
-                  aria-label="Editar tarea"
-                  title="Editar tarea"
-                >
-                  <Edit className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => handleDeleteClick(task)}
-                  aria-label="Eliminar tarea"
-                  title="Eliminar tarea"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-7 p-0"
+                      onClick={() => onEdit(task)}
+                      disabled={task.completed}
+                      aria-label="Editar tarea"
+                    >
+                      <Edit className="h-3.5 w-3.5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">Editar tarea</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-7 p-0"
+                      onClick={() => handleDeleteClick(task)}
+                      aria-label="Eliminar tarea"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">Eliminar tarea</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           );
