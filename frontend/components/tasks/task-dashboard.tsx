@@ -170,7 +170,7 @@ export default function TaskDashboard({
           <ModeToggle />
           <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-destructive transition-colors">
             <LogOut className="h-4 w-4 mr-2" />
-            Cerrar sesion
+            Cerrar sesión
           </Button>
         </div>
       </header>
@@ -208,7 +208,7 @@ export default function TaskDashboard({
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                       <LayoutDashboard className="w-5 h-5 text-muted-foreground" />
-                      <h3 className="font-semibold">Tus Tareas</h3>
+                      <h3 className="font-semibold">Tus tareas</h3>
                     </div>
                     {/* View mode toggle */}
                     <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
@@ -241,7 +241,7 @@ export default function TaskDashboard({
                       value="mis-tareas"
                       className="data-[state=active]:bg-background"
                     >
-                      Mias
+                      Mías
                       <Badge variant="secondary" className="ml-2 bg-background/50">
                         {myTasksCount}
                       </Badge>

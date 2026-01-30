@@ -13,6 +13,7 @@ import {
   Clock,
   AlertTriangle,
   ChevronRight,
+  ClipboardList,
 } from "lucide-react";
 import type { Task } from "@/lib/types";
 import { useState } from "react";
@@ -66,7 +67,7 @@ function getDueDateInfo(dueDate: string) {
   }
   if (isTomorrow(date)) {
     return {
-      label: "Manana",
+      label: "Mañana",
       className: "text-blue-600 dark:text-blue-400",
       icon: Calendar,
     };
@@ -92,9 +93,17 @@ export default function TaskList({
 
   if (tasks.length === 0) {
     return (
-      <p className="text-center py-4 text-muted-foreground">
-        No se encontraron tareas. Crea una para empezar!
-      </p>
+      <div className="flex flex-col items-center justify-center py-12 px-4 text-center space-y-4 bg-muted/20 rounded-2xl border-2 border-dashed border-muted/50">
+        <div className="bg-background p-4 rounded-full shadow-sm ring-1 ring-border">
+          <ClipboardList className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <div className="space-y-1">
+          <p className="font-semibold text-foreground">No se encontraron tareas</p>
+          <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+            ¡Crea tu primera tarea para empezar a organizar tu trabajo hoy mismo!
+          </p>
+        </div>
+      </div>
     );
   }
 
@@ -177,7 +186,7 @@ export default function TaskList({
                           size="sm"
                           className="h-6 w-6 p-0"
                           onClick={() => toggleTaskExpansion(task.id)}
-                          aria-label={isExpanded ? "Contraer descripcion" : "Expandir descripcion"}
+                          aria-label={isExpanded ? "Contraer descripción" : "Expandir descripción"}
                         >
                           {isExpanded ? (
                             <ChevronUp className="h-4 w-4" />
@@ -201,9 +210,9 @@ export default function TaskList({
                       {hasLongDescription && (
                         <button
                           onClick={() => toggleTaskExpansion(task.id)}
-                          className="text-xs font-semibold text-primary hover:underline mt-1 focus:outline-none"
+                          className="text-xs font-semibold text-primary hover:underline mt-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm transition-all"
                         >
-                          {isExpanded ? "Ver menos" : "Ver mas"}
+                          {isExpanded ? "Ver menos" : "Ver más"}
                         </button>
                       )}
                     </div>
