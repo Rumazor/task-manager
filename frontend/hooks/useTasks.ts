@@ -29,7 +29,7 @@ export function useTasks(token: string) {
       } else {
         toast({
           title: "Error",
-          description: result.error || "Ocurrio un error al cargar las tareas.",
+          description: result.error || "Ocurrió un error al cargar las tareas.",
           variant: "destructive",
         });
       }
@@ -74,7 +74,7 @@ export function useTasks(token: string) {
           );
           setEditingTask(null);
           toast({
-            title: "Exito",
+            title: "Éxito",
             description: "Tarea modificada exitosamente.",
           });
         } else {
@@ -95,7 +95,7 @@ export function useTasks(token: string) {
         if (createdTask.success && createdTask.task) {
           setTasks((prev) => [...prev, createdTask.task.data]);
           toast({
-            title: "Exito",
+            title: "Éxito",
             description: "Tarea creada exitosamente.",
           });
         } else {
@@ -117,7 +117,7 @@ export function useTasks(token: string) {
       if (deleted.success) {
         setTasks((prev) => prev.filter((task) => task.id !== id));
         toast({
-          title: "Exito",
+          title: "Éxito",
           description: "Tarea borrada exitosamente",
         });
       } else {
@@ -148,7 +148,7 @@ export function useTasks(token: string) {
       if (updated.success && updated.task) {
         setTasks((prev) => prev.map((t) => (t.id === id ? updated.task : t)));
         toast({
-          title: "Exito",
+          title: "Éxito",
           description: `Tarea marcada como ${
             updated.task.completed ? "completada" : "pendiente"
           }.`,
@@ -183,13 +183,13 @@ export function useTasks(token: string) {
       await logoutAction();
       router.push("/");
       toast({
-        title: "Sesion cerrada",
-        description: "Has cerrado sesion correctamente.",
+        title: "Sesión cerrada",
+        description: "Has cerrado sesión correctamente.",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Error al cerrar sesion.",
+        description: "Error al cerrar sesión.",
         variant: "destructive",
       });
     }

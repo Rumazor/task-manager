@@ -326,7 +326,7 @@ export default function TaskFiltersComponent({
           )}
           {activeFilters.search && (
             <Badge variant="secondary" className="text-xs">
-              Busqueda: {activeFilters.search}
+              Búsqueda: {activeFilters.search}
               <button
                 className="ml-1 hover:text-destructive"
                 onClick={() => handleSearchChange("")}

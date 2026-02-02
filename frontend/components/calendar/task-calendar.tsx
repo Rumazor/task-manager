@@ -150,7 +150,7 @@ export default function TaskCalendar({ token, onTaskClick }: TaskCalendarProps) 
           size="sm"
           onClick={() => setView(Views.DAY)}
         >
-          Dia
+          Día
         </Button>
       </div>
     </div>
@@ -162,13 +162,13 @@ export default function TaskCalendar({ token, onTaskClick }: TaskCalendarProps) 
     next: "Siguiente",
     month: "Mes",
     week: "Semana",
-    day: "Dia",
+    day: "Día",
     agenda: "Agenda",
     date: "Fecha",
     time: "Hora",
     event: "Evento",
     noEventsInRange: "No hay tareas en este rango",
-    showMore: (total: number) => `+ ${total} mas`,
+    showMore: (total: number) => `+ ${total} más`,
   };
 
   return (
