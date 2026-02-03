@@ -1,0 +1,3 @@
+## 2025-02-03 - Spanish Linguistic Polish and Button Accessibility
+**Learning:** In Spanish-language interfaces, missing accents (tildes) on common UI terms like "Mañana", "Título", "Descripción", and "Búsqueda" significantly degrade the perceived quality and professionalism of the application. Additionally, icon-only buttons in complex dashboards frequently lack ARIA labels, hindering accessibility for screen reader users.
+**Action:** Always perform a sweep for common Spanish UI terms that require accentuation and ensure all icon-only buttons have descriptive `aria-label` and `title` attributes.

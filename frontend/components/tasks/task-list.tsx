@@ -66,7 +66,7 @@ function getDueDateInfo(dueDate: string) {
   }
   if (isTomorrow(date)) {
     return {
-      label: "Manana",
+      label: "Mañana",
       className: "text-blue-600 dark:text-blue-400",
       icon: Calendar,
     };

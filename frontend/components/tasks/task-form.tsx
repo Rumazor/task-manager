@@ -175,7 +175,7 @@ export default function TaskForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="task-title">Titulo de la tarea</Label>
+          <Label htmlFor="task-title">Título de la tarea</Label>
           <Input
             id="task-title"
             placeholder="Ej: Comprar leche"
@@ -186,7 +186,7 @@ export default function TaskForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="task-description">Descripcion (opcional)</Label>
+          <Label htmlFor="task-description">Descripción (opcional)</Label>
           <Textarea
             id="task-description"
             placeholder="Detalles adicionales sobre la tarea"
@@ -198,7 +198,7 @@ export default function TaskForm({
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label>Fecha limite</Label>
+            <Label>Fecha límite</Label>
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -325,6 +325,8 @@ export default function TaskForm({
                 size="sm"
                 className="h-8"
                 onClick={handleCreateTag}
+                aria-label="Crear etiqueta"
+                title="Crear etiqueta"
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -334,6 +336,8 @@ export default function TaskForm({
                 size="sm"
                 className="h-8"
                 onClick={() => setShowNewTagForm(false)}
+                aria-label="Cancelar creación de etiqueta"
+                title="Cancelar creación de etiqueta"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -371,7 +375,7 @@ export default function TaskForm({
         </Button>
         {editingTask && (
           <Button type="button" variant="ghost" onClick={onCancel} className="w-full h-10">
-            Cancelar Edicion
+            Cancelar Edición
           </Button>
         )}
       </div>

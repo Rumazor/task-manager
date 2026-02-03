@@ -76,6 +76,8 @@ export default function ProjectList({
           size="sm"
           className="h-7 w-7 p-0"
           onClick={() => setShowForm(true)}
+          aria-label="Nuevo proyecto"
+          title="Nuevo proyecto"
         >
           <Plus className="h-4 w-4" />
         </Button>
@@ -142,6 +144,8 @@ export default function ProjectList({
                           size="sm"
                           className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
                           onClick={(e) => e.stopPropagation()}
+                          aria-label="Acciones del proyecto"
+                          title="Acciones del proyecto"
                         >
                           <MoreVertical className="h-3 w-3" />
                         </Button>

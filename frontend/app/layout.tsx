@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PWAProvider } from "@/components/pwa";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -79,9 +80,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
-          <PWAProvider />
+          <TooltipProvider>
+            {children}
+            <Toaster />
+            <PWAProvider />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

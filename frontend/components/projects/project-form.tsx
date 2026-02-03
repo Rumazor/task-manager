@@ -79,6 +79,8 @@ export default function ProjectForm({
           size="sm"
           className="h-6 w-6 p-0"
           onClick={onCancel}
+          aria-label="Cerrar formulario de proyecto"
+          title="Cerrar formulario de proyecto"
         >
           <X className="h-4 w-4" />
         </Button>
@@ -94,7 +96,7 @@ export default function ProjectForm({
         />
 
         <Textarea
-          placeholder="Descripcion (opcional)"
+          placeholder="Descripción (opcional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
