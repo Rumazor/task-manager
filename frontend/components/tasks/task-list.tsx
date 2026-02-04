@@ -66,7 +66,7 @@ function getDueDateInfo(dueDate: string) {
   }
   if (isTomorrow(date)) {
     return {
-      label: "Manana",
+      label: "Mañana",
       className: "text-blue-600 dark:text-blue-400",
       icon: Calendar,
     };
@@ -93,7 +93,7 @@ export default function TaskList({
   if (tasks.length === 0) {
     return (
       <p className="text-center py-4 text-muted-foreground">
-        No se encontraron tareas. Crea una para empezar!
+        No se encontraron tareas. ¡Crea una para empezar!
       </p>
     );
   }
@@ -177,7 +177,7 @@ export default function TaskList({
                           size="sm"
                           className="h-6 w-6 p-0"
                           onClick={() => toggleTaskExpansion(task.id)}
-                          aria-label={isExpanded ? "Contraer descripcion" : "Expandir descripcion"}
+                          aria-label={isExpanded ? "Contraer descripción" : "Expandir descripción"}
                         >
                           {isExpanded ? (
                             <ChevronUp className="h-4 w-4" />
@@ -203,7 +203,7 @@ export default function TaskList({
                           onClick={() => toggleTaskExpansion(task.id)}
                           className="text-xs font-semibold text-primary hover:underline mt-1 focus:outline-none"
                         >
-                          {isExpanded ? "Ver menos" : "Ver mas"}
+                          {isExpanded ? "Ver menos" : "Ver más"}
                         </button>
                       )}
                     </div>
