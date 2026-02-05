@@ -170,7 +170,7 @@ export default function TaskDashboard({
           <ModeToggle />
           <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-destructive transition-colors">
             <LogOut className="h-4 w-4 mr-2" />
-            Cerrar sesion
+            Cerrar sesión
           </Button>
         </div>
       </header>
@@ -241,7 +241,7 @@ export default function TaskDashboard({
                       value="mis-tareas"
                       className="data-[state=active]:bg-background"
                     >
-                      Mias
+                      Mías
                       <Badge variant="secondary" className="ml-2 bg-background/50">
                         {myTasksCount}
                       </Badge>

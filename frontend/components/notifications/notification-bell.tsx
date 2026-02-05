@@ -97,7 +97,7 @@ export default function NotificationBell({ token }: NotificationBellProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" aria-label="Ver notificaciones">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge
