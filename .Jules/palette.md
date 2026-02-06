@@ -1,0 +1,3 @@
+## 2025-05-14 - Spanish Localization and Accessibility Polish
+**Learning:** The application had several missing Spanish tildes in common UI words ("Día", "más", "descripción", etc.) and lacked ARIA labels for icon-only buttons in the notification bell and calendar components. Proper Spanish localization significantly improves the visual polish and perceived quality of the app.
+**Action:** Always check for proper Spanish accentuation and ensure all icon-only buttons have descriptive `aria-label` attributes. Avoid committing build artifacts like `pnpm-lock.yaml`, log files, or PWA scripts (`sw.js`).

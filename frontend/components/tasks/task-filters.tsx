@@ -132,6 +132,7 @@ export default function TaskFiltersComponent({
           size="icon"
           onClick={() => setShowFilters(!showFilters)}
           className="relative"
+          aria-label="Filtrar tareas"
         >
           <Filter className="h-4 w-4" />
           {activeFilterCount > 0 && (
@@ -326,10 +327,11 @@ export default function TaskFiltersComponent({
           )}
           {activeFilters.search && (
             <Badge variant="secondary" className="text-xs">
-              Busqueda: {activeFilters.search}
+              Búsqueda: {activeFilters.search}
               <button
                 className="ml-1 hover:text-destructive"
                 onClick={() => handleSearchChange("")}
+                aria-label="Quitar filtro de búsqueda"
               >
                 <X className="h-3 w-3" />
               </button>
