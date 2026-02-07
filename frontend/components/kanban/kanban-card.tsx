@@ -75,6 +75,7 @@ export default function KanbanCard({
           {...listeners}
           className="mt-1 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
           onClick={(e) => e.stopPropagation()}
+          aria-label="Arrastrar tarea"
         >
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>

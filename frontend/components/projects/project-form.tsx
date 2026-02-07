@@ -94,7 +94,7 @@ export default function ProjectForm({
         />
 
         <Textarea
-          placeholder="Descripcion (opcional)"
+          placeholder="Descripción (opcional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
