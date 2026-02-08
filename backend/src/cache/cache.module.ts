@@ -15,20 +15,29 @@ const createRedisStore = async (
     const timeout = setTimeout(() => {
       logger.warn('Redis connection timeout, using in-memory cache');
       resolve({ ttl });
-    }, 3000);
+    }, 5000);
 
     try {
       const store = await redisStore({
         socket: {
           host: redisHost,
           port: redisPort,
-          connectTimeout: 2000,
+          connectTimeout: 4000,
           reconnectStrategy: () => false,
         },
         password: redisPassword || undefined,
         ttl,
       });
       clearTimeout(timeout);
+
+      // Handle Redis client errors to prevent app crashes
+      const client = (store as any).client;
+      if (client && client.on) {
+        client.on('error', (err: Error) => {
+          logger.warn('Redis client error:', err.message);
+        });
+      }
+
       logger.log('Connected to Redis cache');
       resolve({ store, ttl });
     } catch (error) {

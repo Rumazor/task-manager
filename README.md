@@ -91,6 +91,32 @@ Abre tu navegador en `http://localhost:3000` para ver la interfaz de Next.js.
 
 El backend (NestJS) responderá en `http://localhost:3001`.
 
+### Poblar la base de datos con datos de prueba
+
+Para iniciar con datos de prueba, ejecuta el script de seed:
+
+    ./seed.sh
+
+O manualmente:
+
+    docker compose exec nestjs yarn seed
+
+**Cuentas de prueba creadas:**
+
+| Rol     | Email              | Contraseña  |
+|---------|-------------------|-------------|
+| Admin   | admin@test.com    | password123 |
+| Manager | manager@test.com  | password123 |
+| Usuario | john@test.com     | password123 |
+| Usuario | jane@test.com     | password123 |
+| Usuario | bob@test.com      | password123 |
+
+**Datos generados por el seed:**
+- 5 usuarios (1 admin, 1 manager, 3 usuarios regulares)
+- 3 proyectos
+- 5 etiquetas
+- 17 tareas (incluyendo subtareas y asignaciones)
+
 ## Rutas principales (Backend)
 
 - `POST /auth/login`  
