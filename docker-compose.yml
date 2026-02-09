@@ -117,6 +117,18 @@ services:
     networks:
       - my_network
 
+  # Monitoreo de containers
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - my_network
+
 networks:
   my_network:
     driver: bridge
@@ -124,3 +136,4 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  portainer_data:

@@ -15,6 +15,7 @@ import { ActivityModule } from './activity/activity.module';
 import { StatsModule } from './stats/stats.module';
 import { RedisCacheModule } from './cache/cache.module';
 import { WebsocketsModule } from './websockets/websockets.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { WebsocketsModule } from './websockets/websockets.module';
     }),
     RedisCacheModule,
     WebsocketsModule,
+    HealthModule,
     AuthModule,
     UsersModule,
     TasksModule,
