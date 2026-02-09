@@ -3,6 +3,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "3001:3000"
     environment:
@@ -25,26 +26,42 @@ services:
         condition: service_healthy
     networks:
       - my_network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
 
   nextjs:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: nextjs_app
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       BASE_API_URL: "http://nestjs:3000"
       NEXT_PUBLIC_API_URL: "http://localhost:3001"
     depends_on:
-      - nestjs
+      nestjs:
+        condition: service_healthy
     networks:
       - my_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
 
   postgres:
-    image: postgres:14.3
-    ports:
-      - "5432:5432"
+    image: postgres:14-alpine  # 🔥 50% más pequeña
+    restart: unless-stopped
+    # Solo exponer si necesitas acceso directo desde tu máquina
+    # ports:
+    #   - "5432:5432"
     environment:
       POSTGRES_USER: "${DB_USER}"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
@@ -52,25 +69,29 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     networks:
       - my_network
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+    # Solo exponer si necesitas acceso directo desde tu máquina
+    # ports:
+    #   - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --save ""
     volumes:
       - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 3s
+      retries: 3
+      start_period: 5s
     networks:
       - my_network
 
