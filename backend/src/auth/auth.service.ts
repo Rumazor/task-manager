@@ -49,6 +49,7 @@ export class AuthService {
         user,
         token: this.getJwtToken({
           id: newUser.id,
+          email: newUser.email,
         }),
       };
     } catch (error) {
@@ -101,6 +102,7 @@ export class AuthService {
       ...loggedUser,
       token: this.getJwtToken({
         id: user.id,
+        email: user.email,
       }),
     };
   }
@@ -203,7 +205,7 @@ export class AuthService {
         name: user.name,
         role: user.role,
       },
-      token: this.getJwtToken({ id: user.id }),
+      token: this.getJwtToken({ id: user.id, email: user.email }),
     };
   }
 
